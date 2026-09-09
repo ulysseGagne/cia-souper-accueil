@@ -653,7 +653,7 @@ let editing = false;
 let specVal = 2;
 
 function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
-function load(){ try{ const r = localStorage.getItem(LS_KEY); if(r){ const p=JSON.parse(r); if(p && p.v===3) state = Object.assign(state, p); } }catch(e){} }
+function load(){ try{ const r = localStorage.getItem(LS_KEY); if(r){ const p=JSON.parse(r); if(p && p.v===4) state = Object.assign(state, p); } }catch(e){} }
 
 /* ================= OUTILS ================= */
 function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
