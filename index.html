@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f5f1">
+<meta name="description" content="Trois jeux maison pour le souper d'accueil du CIA (Club d'Intelligence Artificielle, Université Laval) — Hot Takes, Coupable! et The Bluff Game. Touche un jeu pour jouer.">
+<title>Trois jeux, une poutine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --disp:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
+  --jeu:"Bricolage Grotesque",system-ui,-apple-system,sans-serif;
+  --paper:#f7f5f1; --ink:#141210; --ink-2:#5c564c; --trait:rgba(20,18,16,.16);
+  --feu:linear-gradient(120deg,#ffc42e 0%,#ff7a1a 42%,#ff2d55 78%,#ff2d7e 100%);
+  --bleu:#16257e; --noir:#0c0e13; --alarme:#e11d33; --rouge-ht:#ff3d2e;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--disp);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img{max-width:100%}
+
+/* ---------- mise en page ---------- */
+.wrap{min-height:100dvh;display:flex;flex-direction:column;max-width:1180px;margin:0 auto;
+  padding:max(20px,env(safe-area-inset-top)) clamp(18px,5vw,54px) max(20px,env(safe-area-inset-bottom))}
+.top{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);
+  font-size:clamp(10.5px,2.5vw,14px);letter-spacing:.2em;text-transform:uppercase;color:var(--ink)}
+.tete{text-align:center;margin:clamp(24px,6vw,56px) 0 clamp(6px,2vw,14px)}
+.titre{margin:0;font-weight:800;letter-spacing:-.03em;line-height:.9;font-size:clamp(46px,12vw,104px)}
+.sous{margin:clamp(14px,3vw,24px) auto 0;max-width:38ch;font-weight:600;letter-spacing:-.012em;
+  color:var(--ink-2);font-size:clamp(15px,3.3vw,23px);line-height:1.34}
+.hint{margin:clamp(16px,3.4vw,26px) auto 0;font-family:var(--mono);font-weight:500;
+  font-size:clamp(11px,2.7vw,13px);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);
+  display:inline-flex;align-items:center;gap:.6em}
+.hint .dot{width:7px;height:7px;border-radius:50%;background:var(--alarme);
+  box-shadow:0 0 0 0 rgba(225,29,51,.5);animation:pulse 2.2s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(225,29,51,.45)}70%,100%{box-shadow:0 0 0 9px rgba(225,29,51,0)}}
+
+/* ---------- la rangée des trois jeux ---------- */
+.rang{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:clamp(30px,7vw,46px);padding:clamp(24px,5vw,44px) 0}
+@media(min-width:820px){
+  .rang{flex-direction:row;align-items:flex-end;justify-content:center;gap:clamp(6px,1.6vw,22px);perspective:1600px}
+}
+
+/* la tuile-lien */
+.poste{--w:min(248px,66vw);display:block;text-decoration:none;color:inherit;position:relative;
+  transition:transform .18s cubic-bezier(.2,.9,.3,1);border-radius:calc(var(--w)*.16)}
+.poste:hover{transform:translateY(-9px)}
+.poste:active{transform:translateY(-3px) scale(.99)}
+.poste:focus-visible{outline:3px solid var(--ink);outline-offset:9px;border-radius:calc(var(--w)*.18)}
+@media(min-width:820px){
+  .poste{--w:206px}
+  .poste:nth-child(1) .tel{transform:rotate(-6deg)}
+  .poste:nth-child(3) .tel{transform:rotate(6deg)}
+  .poste:nth-child(2){z-index:3;margin-bottom:16px}
+}
+@media(hover:none){ .poste:hover{transform:none} }
+
+/* ---------- le châssis (proportions réelles 393×852), dérivé de l'affiche ---------- */
+.tel{--w:206px;width:var(--w);aspect-ratio:393/852;display:block;position:relative;
+  border-radius:calc(var(--w)*.152);
+  background:linear-gradient(145deg,#5b5f66,#24262b 22%,#16181c 50%,#2c2f35 78%,#63666d);
+  padding:calc(var(--w)*.0115);
+  box-shadow:22px 30px 40px -14px rgba(58,46,30,.34),5px 9px 14px rgba(58,46,30,.16),
+    0 calc(var(--w)*.06) calc(var(--w)*.12) -8px rgba(0,0,0,.5)}
+.poste:nth-child(2) .tel{box-shadow:26px 40px 54px -14px rgba(58,46,30,.4),6px 12px 20px rgba(58,46,30,.16)}
+.tel .ecr{position:absolute;inset:calc(var(--w)*.0115);border-radius:calc(var(--w)*.141);
+  overflow:hidden;font-family:var(--jeu);isolation:isolate}
+.tel .ecr::after{content:"";position:absolute;left:50%;transform:translateX(-50%);
+  top:calc(var(--w)*.028);width:calc(var(--w)*.318);height:calc(var(--w)*.092);
+  border-radius:999px;background:#000;z-index:9}
+.tel .bt{position:absolute;background:linear-gradient(180deg,#4a4d53,#2a2c31);border-radius:2px}
+.tel .bt-a {left:calc(var(--w)*-.006);top:16%;width:calc(var(--w)*.008);height:4.2%}
+.tel .bt-v1{left:calc(var(--w)*-.007);top:24%;width:calc(var(--w)*.009);height:7.4%}
+.tel .bt-v2{left:calc(var(--w)*-.007);top:33.5%;width:calc(var(--w)*.009);height:7.4%}
+.tel .bt-p {right:calc(var(--w)*-.007);top:27%;width:calc(var(--w)*.009);height:11.5%}
+
+/* ---------- le squelette d'écran (scène · mot · cta) ---------- */
+.tel .scene{position:absolute;left:6%;right:6%;top:10%;bottom:40%;display:grid;place-items:center}
+.tel .mot{position:absolute;left:7%;right:7%;bottom:18%;text-align:center}
+.tel .cta{position:absolute;left:7%;right:7%;bottom:7.4%;height:6.6%;
+  border-radius:calc(var(--w)*.062);display:grid;place-items:center;background:#fff;
+  font-weight:800;font-size:calc(var(--w)*.056);letter-spacing:-.015em;
+  box-shadow:0 calc(var(--w)*.03) calc(var(--w)*.07) rgba(0,0,0,.22)}
+.tel .mot h4{display:flex;flex-direction:column;align-items:center;line-height:1;
+  gap:calc(var(--w)*.022);margin:0 0 calc(var(--w)*.058);color:#fff;letter-spacing:-.048em}
+.tel .mot h4 b{font-weight:800;font-size:calc(var(--w)*.175);margin:-.16em 0}
+.tel .mot h4 s{text-decoration:none;font-weight:800;font-size:calc(var(--w)*.062);
+  letter-spacing:-.02em;margin:-.16em 0}
+.tel .mot p{font-family:var(--mono);font-weight:600;font-size:calc(var(--w)*.042);
+  line-height:1.35;margin:0;color:#fff;letter-spacing:.005em}
+
+/* Hot Takes */
+.t-ht .ecr{background:var(--feu)}
+.t-ht .cta{color:var(--rouge-ht)}
+.t-ht .flamme{width:60%;height:auto;filter:drop-shadow(0 calc(var(--w)*.03) calc(var(--w)*.05) rgba(140,20,0,.3))}
+/* Coupable! */
+.t-cp .ecr{background:var(--noir)}
+.t-cp .cta{color:var(--noir)}
+.t-cp .mot h4 i{font-style:normal;color:var(--alarme)}
+.t-cp .cp-scene{width:100%;height:auto}
+/* The Bluff Game */
+.t-bl .ecr{background:
+  radial-gradient(128% 62% at 50% 20%, #3247c9 0%, rgba(50,71,201,.42) 38%, rgba(50,71,201,0) 72%),
+  linear-gradient(180deg,#1b2c96 0%,var(--bleu) 44%,#0d1653 100%)}
+.t-bl .cta{color:var(--bleu)}
+.t-bl .scene{bottom:44%}
+.t-bl .tri{display:flex;flex-wrap:wrap;justify-content:center;width:calc(var(--w)*.62);
+  gap:calc(var(--w)*.03) calc(var(--w)*.09);font-size:calc(var(--w)*.19);line-height:1;
+  filter:drop-shadow(0 calc(var(--w)*.04) calc(var(--w)*.055) rgba(0,0,0,.5))}
+.t-bl .tri .h{flex:0 0 100%;text-align:center}
+
+/* ---------- pied ---------- */
+.foot{font-family:var(--mono);font-size:clamp(10.5px,2.4vw,14px);line-height:1.6;letter-spacing:.1em;
+  text-transform:uppercase;border-top:1.6px solid var(--trait);padding-top:13px;margin-top:8px}
+.foot .r1,.foot .r2{display:flex;justify-content:space-between;gap:16px}
+.foot .r2{opacity:.72}
+@media(max-width:520px){
+  .foot .r1,.foot .r2{flex-direction:column;gap:2px;text-align:center;align-items:center}
+  .foot .r2{margin-top:6px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top"><span>Souper d'accueil</span><span>ven. 11 sept.</span></div>
+
+  <div class="tete">
+    <h1 class="titre">Trois jeux.<br>Une poutine.</h1>
+    <p class="sous">Présentation du club. Rencontres. Poutine gratuite. Trois jeux créés sur mesure pour la soirée.</p>
+    <p class="hint"><span class="dot" aria-hidden="true"></span>Touche un jeu pour jouer</p>
+  </div>
+
+  <div class="rang">
+
+    <!-- Hot Takes -->
+    <a class="poste" href="./hot-takes/" aria-label="Jouer à Hot Takes">
+      <span class="tel t-ht">
+        <span class="bt bt-a"></span><span class="bt bt-v1"></span><span class="bt bt-v2"></span><span class="bt bt-p"></span>
+        <span class="ecr">
+          <span class="scene"><svg class="flamme" viewBox="0 0 120 150" aria-hidden="true"><path d="M67.7 30.9C64.9 24.3 62.9 24.8 63.1 32C61.2 43.8 52.6 51.2 45 59.7C36.7 69.2 27.9 79.2 27.9 95.1A35.4 35.4 0 0 0 98.1 95.7C98.1 85 94.2 75.7 88.2 67.9C87.1 66.6 85.8 66.9 85.2 68.4C82.4 73.9 77.6 75.3 74.5 69.2C71 61.7 74.7 50.8 67.7 30.9Z" fill="#fff"/></svg></span>
+          <span class="mot"><h4><b>Hot</b><b>Takes</b></h4><p>Aucune bonne réponse.</p></span>
+          <span class="cta">Commencer</span>
+        </span>
+      </span>
+    </a>
+
+    <!-- Coupable! -->
+    <a class="poste" href="./coupable/" aria-label="Jouer à Coupable!">
+      <span class="tel t-cp">
+        <span class="bt bt-a"></span><span class="bt bt-v1"></span><span class="bt bt-v2"></span><span class="bt bt-p"></span>
+        <span class="ecr">
+          <span class="scene"><svg class="cp-scene" viewBox="0 0 248 230" aria-hidden="true"><defs>
+            <filter id="qfl" x="-60%" y="-160%" width="220%" height="420%"><feGaussianBlur stdDeviation="3.2"/></filter>
+            <linearGradient id="qsol" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".055"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+            <radialGradient id="qfla"><stop offset="0" stop-color="#fff" stop-opacity=".17"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+            <linearGradient id="qpeau" gradientUnits="userSpaceOnUse" x1="0" y1="16" x2="0" y2="196"><stop offset="0" stop-color="#fbfcfe"/><stop offset="1" stop-color="#c6cddb"/></linearGradient>
+            <linearGradient id="qpeauR" gradientUnits="userSpaceOnUse" x1="0" y1="16" x2="0" y2="196"><stop offset="0" stop-color="#f0304a"/><stop offset="1" stop-color="#a81326"/></linearGradient></defs>
+            <rect x="0" y="196" width="248" height="34" fill="url(#qsol)"/>
+            <line x1="0" y1="196" x2="248" y2="196" stroke="rgba(255,255,255,.11)" stroke-width="1"/>
+            <ellipse cx="124" cy="205" rx="140" ry="30" fill="url(#qfla)"/>
+            <g fill="#04050a" opacity=".62" filter="url(#qfl)"><ellipse cx="40" cy="202" rx="21" ry="6.5"/><ellipse cx="82" cy="202" rx="21" ry="6.5"/><ellipse cx="124" cy="202" rx="21" ry="6.5"/><ellipse cx="166" cy="202" rx="21" ry="6.5"/><ellipse cx="208" cy="202" rx="21" ry="6.5"/></g>
+            <g fill="url(#qpeau)"><circle cx="40" cy="59.5" r="11.5"/><path d="M23 196V90Q23 74 39 74h2q16 0 16 16v106z"/><circle cx="124" cy="27.5" r="11.5"/><path d="M107 196V58q0-16 16-16h2q16 0 16 16v138z"/><circle cx="166" cy="67.5" r="11.5"/><path d="M149 196V98q0-16 16-16h2q16 0 16 16v98z"/><circle cx="208" cy="51.5" r="11.5"/><path d="M191 196V82q0-16 16-16h2q16 0 16 16v114z"/></g>
+            <g fill="url(#qpeauR)"><circle cx="82" cy="37.5" r="11.5"/><path d="M65 196V68q0-16 16-16h2q16 0 16 16v128z"/></g></svg></span>
+          <span class="mot"><h4><b>Coupable<i>!</i></b></h4><p>Un innocent de trop.</p></span>
+          <span class="cta">Voir les suspects</span>
+        </span>
+      </span>
+    </a>
+
+    <!-- The Bluff Game -->
+    <a class="poste" href="./bluff/" aria-label="Jouer à The Bluff Game">
+      <span class="tel t-bl">
+        <span class="bt bt-a"></span><span class="bt bt-v1"></span><span class="bt bt-v2"></span><span class="bt bt-p"></span>
+        <span class="ecr">
+          <span class="scene"><span class="tri"><span class="h">🥸</span><span>🧐</span><span>🤓</span></span></span>
+          <span class="mot"><h4><s>The</s><b>Bluff</b><b>Game.</b></h4><p>Démasque les menteurs.</p></span>
+          <span class="cta">Démasquer</span>
+        </span>
+      </span>
+    </a>
+
+  </div>
+
+  <div class="foot">
+    <div class="r1"><span>Club d'intelligence artificielle</span><span>Université Laval</span></div>
+    <div class="r2"><span>17 h à 21 h au Pub U</span><span>80 places</span></div>
+  </div>
+
+</div>
+</body>
+</html>

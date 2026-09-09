@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16257e">
+<meta name="description" content="The Bluff Game — un jeu de bluff pour le souper d'accueil du CIA (Club d'Intelligence Artificielle, Université Laval).">
+<title>The Bluff Game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{
+    color-scheme: dark;
+    /* Identité « The Bluff Game » — bleu roi de l'affiche (source de vérité) */
+    --ground:#141d5e;
+    --ground-2:#1d2a7e;
+    --ground-3:#27379a;
+    --line:#39489f;
+    --ink:#eaf1f7;
+    --ink-dim:#a6b2e0;
+    --accent:#ffffff;
+    --accent-ink:#16257e;
+    --display:"Bricolage Grotesque",system-ui,-apple-system,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
+
+    /* rôles : fond profond (--rc), teinte vive (--rv) — utilisés en mode plein écran */
+    --c-ignorant:#232a86; --v-ignorant:#8f97ff;
+    --c-honnete:#0b6b45;  --v-honnete:#38e08f;
+    --c-menteur:#9e123f;  --v-menteur:#ff6a95;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:var(--mono);
+    overflow:hidden;
+    -webkit-tap-highlight-color:transparent;
+  }
+  [hidden]{display:none!important}
+  button{font:inherit;color:inherit;cursor:pointer}
+
+  .app{position:relative;height:100dvh;width:100%;overflow:hidden}
+
+  /* ---------- écran générique ---------- */
+  .screen{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;
+    padding:clamp(22px,7vw,40px);
+    padding-bottom:max(clamp(22px,7vw,40px),env(safe-area-inset-bottom));
+    overflow-y:auto;
+  }
+  .screen.center{align-items:center;justify-content:safe center;text-align:center;gap:18px}
+
+  .eyebrow{
+    font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--accent);margin:0;
+  }
+  .q{
+    font-family:var(--display);font-weight:800;line-height:1.02;letter-spacing:-.02em;
+    font-size:clamp(28px,8vw,44px);margin:0;text-wrap:balance;max-width:16ch;
+  }
+  .fine{font-family:var(--mono);font-size:12.5px;color:var(--ink-dim);margin:0;line-height:1.5}
+
+  /* ---------- boutons ---------- */
+  .btn{
+    border:none;border-radius:16px;padding:17px 26px;
+    font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.01em;
+    transition:transform .09s ease, filter .15s ease;
+    display:inline-flex;align-items:center;justify-content:center;gap:.5ch;
+  }
+  .btn:active{transform:scale(.97)}
+  .btn.primary{background:var(--accent);color:var(--accent-ink)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+  .btn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  .link{
+    background:none;border:none;color:var(--ink-dim);font-family:var(--mono);
+    font-size:13px;text-decoration:underline;text-underline-offset:3px;padding:8px;
+  }
+  .link:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+  /* ---------- ACCUEIL ---------- */
+  /* fond « bleu roi » de l'affiche : nappe radiale claire sur un dégradé qui s'assombrit */
+  #home{
+    background:
+      radial-gradient(128% 62% at 50% 20%, #3247c9 0%, rgba(50,71,201,.42) 38%, rgba(50,71,201,0) 72%),
+      linear-gradient(180deg,#1b2c96 0%,#16257e 44%,#0d1653 100%);
+  }
+  .home-roles{
+    display:flex;flex-wrap:wrap;justify-content:center;align-items:center;
+    gap:clamp(4px,1.6vw,10px) clamp(20px,8vw,44px);
+    font-size:clamp(46px,15vw,86px);line-height:1;
+    filter:saturate(1.05) drop-shadow(0 10px 24px rgba(0,0,0,.45));
+  }
+  .home-roles .top{flex:0 0 100%;text-align:center}
+  .wordmark{
+    font-family:var(--display);font-weight:800;letter-spacing:-.04em;line-height:.9;
+    font-size:clamp(76px,26vw,150px);margin:2px 0 0;
+  }
+  .wordmark.stack{display:flex;flex-direction:column;align-items:center;line-height:.86;margin-top:2px}
+  .wordmark.stack .lede{font-size:clamp(26px,8vw,44px);letter-spacing:-.02em}
+  .wordmark.stack .big{font-size:clamp(60px,20vw,124px);letter-spacing:-.04em;margin:2px 0}
+  .tagline{font-family:var(--mono);font-size:14.5px;line-height:1.55;color:#e6ecff;margin:0;max-width:26ch}
+  .home-cta{margin-top:6px;min-width:min(320px,80vw)}
+  /* --- Retour au menu maitre (app Trois jeux) --- */
+  .to-menu{position:fixed;z-index:60;top:max(12px,env(safe-area-inset-top));
+    width:40px;height:40px;padding:0;border:none;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;text-decoration:none;
+    background:rgba(10,12,20,.42);color:#fff;cursor:pointer;
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    transition:transform .09s ease, background .15s ease}
+  .to-menu.tl{left:max(12px,env(safe-area-inset-left))}
+  .to-menu.tr{right:max(12px,env(safe-area-inset-right))}
+  .to-menu:hover{background:rgba(10,12,20,.62)}
+  .to-menu:active{transform:scale(.92)}
+  .to-menu:focus-visible{outline:3px solid #fff;outline-offset:2px}
+  .to-menu svg{width:20px;height:20px;display:block}
+
+  /* ---------- choix (nb joueurs / numéro) ---------- */
+  .choices{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center}
+  .chip{
+    width:76px;height:76px;border-radius:50%;
+    background:var(--ground-2);border:1.5px solid var(--line);color:var(--ink);
+    font-family:var(--display);font-weight:800;font-size:30px;
+    display:flex;align-items:center;justify-content:center;
+    transition:transform .09s ease, background .15s ease, border-color .15s ease;
+  }
+  .chip:active{transform:scale(.94)}
+  .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .chip:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  .num-grid{max-width:340px}
+
+  /* ---------- RÔLE — discret par défaut ---------- */
+  .role-screen{background:var(--ground);color:var(--ink);text-align:center;align-items:center}
+  .flood-top{
+    position:relative;z-index:1;width:100%;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+  }
+  .tour{
+    font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--ink-dim);
+  }
+  .gear{
+    background:transparent;border:none;color:var(--ink-dim);
+    width:40px;height:36px;padding:0;display:flex;align-items:center;justify-content:center;
+  }
+  .gear svg{width:20px;height:20px;display:block}
+  .gear:hover{color:var(--ink)}
+  .gear:active{transform:scale(.94)}
+  .gear:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+
+  .flood-body{
+    position:relative;z-index:1;flex:1;min-height:0;width:100%;
+    display:flex;flex-direction:column;align-items:center;justify-content:safe center;
+    gap:12px;padding:14px 0;overflow-y:auto;
+  }
+  .role-emoji{font-size:clamp(72px,23vw,128px);line-height:1}
+  .role-label{
+    font-family:var(--mono);font-weight:600;font-size:11.5px;letter-spacing:.28em;
+    text-transform:uppercase;color:var(--ink-dim);margin:0;
+  }
+  .role-name{
+    font-family:var(--display);font-weight:800;letter-spacing:-.02em;line-height:.92;
+    font-size:clamp(46px,15vw,82px);margin:0;color:var(--ink);
+  }
+  .card{
+    width:100%;max-width:440px;text-align:left;
+    background:var(--ground-2);border:1px solid var(--line);
+    border-radius:18px;padding:18px 18px 20px;
+    display:flex;flex-direction:column;gap:9px;
+  }
+  .card-label{
+    font-family:var(--mono);font-weight:600;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--accent);margin:0;
+  }
+  .card-q{font-family:var(--display);font-weight:800;font-size:clamp(19px,5.4vw,25px);line-height:1.12;margin:0;letter-spacing:-.01em;color:var(--ink)}
+  .card-body{font-family:var(--mono);font-size:14.5px;line-height:1.6;margin:0;color:var(--ink)}
+  .card-hint{font-family:var(--mono);font-size:12.5px;line-height:1.5;margin:0;color:var(--ink-dim)}
+  .btn.onflood{
+    position:relative;z-index:1;background:var(--accent);color:var(--accent-ink);
+    width:100%;max-width:440px;margin-top:4px;
+  }
+
+  /* ---------- RÔLE — option plein écran couleur ---------- */
+  .role-screen.flood{color:#fff;background:var(--rc);animation:pop .2s cubic-bezier(.2,.9,.3,1);overflow:hidden}
+  .role-screen.flood::before{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(120% 80% at 50% -10%, rgba(255,255,255,.20), rgba(255,255,255,0) 55%),
+      linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.28));
+  }
+  @keyframes pop{from{transform:scale(.97);opacity:.3}to{transform:none;opacity:1}}
+  .role-screen.flood .tour{color:rgba(255,255,255,.82)}
+  .role-screen.flood .gear{color:rgba(255,255,255,.72)}
+  .role-screen.flood .gear:hover{color:#fff}
+  .role-screen.flood .role-label{color:var(--rv)}
+  .role-screen.flood .role-name{color:#fff}
+  .role-screen.flood .card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(2px)}
+  .role-screen.flood .card-label{color:var(--rv)}
+  .role-screen.flood .card-q,
+  .role-screen.flood .card-body{color:#fff}
+  .role-screen.flood .card-hint{color:rgba(255,255,255,.72)}
+  .role-screen.flood .btn.onflood{background:#fff;color:var(--rc)}
+
+  /* ---------- as-tu marqué ---------- */
+  .role-emoji.sm{font-size:clamp(48px,15vw,72px)}
+  .yn{width:100%;max-width:440px;gap:12px}
+  .yn .btn{flex:1}
+
+  /* ---------- SCORE ---------- */
+  .score-num{
+    font-family:var(--display);font-weight:800;line-height:.9;letter-spacing:-.03em;
+    font-size:clamp(84px,30vw,150px);display:flex;align-items:baseline;
+    gap:clamp(12px,3.4vw,20px);color:var(--accent);font-variant-numeric:tabular-nums;
+  }
+  .score-unit{font-size:clamp(20px,6vw,30px);color:var(--ink-dim);font-weight:600;letter-spacing:.01em}
+  .reveal{
+    width:100%;max-width:480px;text-align:left;
+    background:var(--ground-2);border:1px solid var(--line);border-radius:18px;
+    padding:20px;display:flex;flex-direction:column;gap:12px;margin-top:2px;
+  }
+  .reveal-label{
+    font-family:var(--mono);font-weight:600;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--accent);margin:0;
+  }
+  .reveal-head{
+    font-family:var(--display);font-weight:800;font-size:clamp(24px,7vw,32px);
+    line-height:1.02;letter-spacing:-.02em;margin:0;display:flex;align-items:center;gap:.4ch;
+  }
+  .reveal-text{font-family:var(--mono);font-size:15px;line-height:1.62;margin:0;color:var(--ink)}
+  .reveal-partner{font-family:var(--mono);font-weight:600;font-size:12.5px;letter-spacing:.02em;color:var(--ink-dim);margin:0;
+    padding-top:12px;border-top:1px solid var(--line)}
+  .reveal-partner b{color:var(--accent);font-weight:700}
+  .score-actions{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;max-width:440px}
+  .score-actions .btn{width:100%}
+  /* CTA formulaire : collee au bas de l'ecran, pleine largeur, impossible a manquer */
+  .cta-form{
+    margin-top:auto;width:100%;max-width:440px;text-decoration:none;
+    text-align:center;box-shadow:0 12px 34px rgba(0,0,0,.42);
+  }
+
+  /* ---------- feuille de réglages ---------- */
+  .sheet{
+    position:absolute;inset:0;z-index:20;
+    background:rgba(3,8,15,.66);backdrop-filter:blur(3px);
+    display:flex;align-items:flex-end;justify-content:center;
+  }
+  .sheet-card{
+    width:100%;max-width:520px;max-height:92dvh;overflow-y:auto;background:var(--ground-2);
+    border:1px solid var(--line);border-bottom:none;
+    border-radius:22px 22px 0 0;padding:22px clamp(18px,6vw,28px) max(24px,env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;gap:18px;
+    animation:rise .22s cubic-bezier(.2,.9,.3,1);
+  }
+  @keyframes rise{from{transform:translateY(18px);opacity:.5}to{transform:none;opacity:1}}
+  .sheet-title{font-family:var(--display);font-weight:800;font-size:22px;margin:0;letter-spacing:-.01em}
+  .field{display:flex;flex-direction:column;gap:9px}
+  .field > span{font-family:var(--mono);font-weight:600;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .mini{
+    min-width:52px;height:48px;padding:0 16px;border-radius:12px;
+    background:var(--ground-3);border:1.5px solid var(--line);color:var(--ink);
+    font-family:var(--display);font-weight:800;font-size:18px;
+  }
+  .mini[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .mini:active{transform:scale(.95)}
+  .mini:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .stepper{display:flex;align-items:center;gap:14px}
+  .stepper .val{font-family:var(--display);font-weight:800;font-size:26px;min-width:2ch;text-align:center;font-variant-numeric:tabular-nums}
+  .step-btn{width:48px;height:48px;border-radius:12px;background:var(--ground-3);border:1.5px solid var(--line);color:var(--ink);font-size:24px;font-weight:600;line-height:1}
+  .step-btn:active{transform:scale(.94)}
+  .sheet-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:2px}
+
+  @media (prefers-reduced-motion:reduce){
+    .role-screen.flood,.sheet-card{animation:none}
+    .btn:active,.chip:active,.mini:active,.step-btn:active,.gear:active{transform:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ACCUEIL -->
+  <section id="home" class="screen center">
+    <a class="to-menu tl" href="../" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5 L8 12 L15 19"/></svg></a>
+    <div class="home-roles" aria-hidden="true"><span class="top">🥸</span><span>🧐</span><span>🤓</span></div>
+    <h1 class="wordmark stack">
+      <span class="lede">The</span>
+      <span class="big">Bluff</span>
+      <span class="big">Game.</span>
+    </h1>
+    <p class="tagline">Démasque les menteurs.</p>
+    <button class="btn primary home-cta" data-go="setupN">Démasquer</button>
+  </section>
+
+  <!-- NB JOUEURS -->
+  <section id="setupN" class="screen center" hidden>
+    <p class="eyebrow">Mise en place</p>
+    <h2 class="q">Combien de joueurs à ta table?</h2>
+    <div class="choices" id="nChoices">
+      <button class="chip" data-n="5" aria-pressed="false">5</button>
+      <button class="chip" data-n="6" aria-pressed="false">6</button>
+      <button class="chip" data-n="7" aria-pressed="false">7</button>
+    </div>
+  </section>
+
+  <!-- NUMÉRO DU JOUEUR -->
+  <section id="setupNum" class="screen center" hidden>
+    <p class="eyebrow">Ton identité</p>
+    <h2 class="q">Ton numéro de joueur?</h2>
+    <div class="choices num-grid" id="numGrid"></div>
+    <button class="link" data-go="setupN">← changer le nombre de joueurs</button>
+  </section>
+
+  <!-- RÔLE DU TOUR -->
+  <section id="role" class="screen role-screen" hidden>
+    <div class="flood-top">
+      <span class="tour" id="roleTour">Tour 1</span>
+      <button class="gear" id="gearBtn" aria-label="Réglages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+    </div>
+    <div class="flood-body">
+      <div class="role-emoji" id="roleEmoji">🧐</div>
+      <p class="role-label">Ton rôle</p>
+      <h2 class="role-name" id="roleName">Ignorant</h2>
+      <div class="card" id="roleCard"></div>
+    </div>
+    <button class="btn onflood" id="endRoundBtn">Fin du tour →</button>
+  </section>
+
+  <!-- AS-TU MARQUÉ ? -->
+  <section id="scored" class="screen center" hidden>
+    <p class="eyebrow" id="scoredTour">Tour 1</p>
+    <div class="role-emoji sm" id="scoredEmoji">🧐</div>
+    <h2 class="q" id="scoredQ">As-tu marqué un point?</h2>
+    <p class="fine" id="scoredHint"></p>
+    <div class="choices yn" id="ynBox">
+      <button class="btn ghost" id="scoredNo">Non</button>
+      <button class="btn primary" id="scoredYes">Oui</button>
+    </div>
+    <button class="btn primary" id="scoredContinue" hidden>Continuer →</button>
+  </section>
+
+  <!-- SCORE -->
+  <section id="score" class="screen center" hidden>
+    <a class="to-menu tr" id="toMenuScore" hidden href="../" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5 L8 12 L15 19"/></svg></a>
+    <p class="eyebrow" id="scoreTour" hidden>Partie terminée</p>
+    <div class="score-num"><span id="scoreVal">0</span><span class="score-unit" id="scoreUnit">pt</span></div>
+    <div class="reveal" id="reveal" hidden>
+      <p class="reveal-label">Le vrai projet</p>
+      <p class="reveal-head"><span id="revEmoji">✈️</span><span id="revName">Projet</span></p>
+      <p class="reveal-text" id="revText"></p>
+      <p class="reveal-partner" id="revPartner" hidden></p>
+    </div>
+    <div class="score-actions">
+      <button class="btn primary" id="nextBtn">Tour suivant →</button>
+      <button class="link" id="resetBtn">Recommencer</button>
+    </div>
+    <a class="btn primary cta-form" id="projectCta" href="https://forms.cloud.microsoft/r/np4xP3HYBf" target="_blank" rel="noopener" hidden>Embarque dans un projet →</a>
+  </section>
+
+  <!-- RÉGLAGES -->
+  <div id="sheet" class="sheet" hidden>
+    <div class="sheet-card" role="dialog" aria-modal="true" aria-label="Réglages">
+      <h3 class="sheet-title">Réglages</h3>
+      <div class="field">
+        <span>Joueurs à la table</span>
+        <div class="row" id="setN"></div>
+      </div>
+      <div class="field">
+        <span>Ton numéro</span>
+        <div class="row" id="setNum"></div>
+      </div>
+      <div class="field">
+        <span>Affichage du rôle</span>
+        <div class="row" id="setFlood">
+          <button class="mini" data-flood="0">Discret</button>
+          <button class="mini" data-flood="1">Plein écran</button>
+        </div>
+      </div>
+      <div class="field">
+        <span>Tour actuel</span>
+        <div class="stepper">
+          <button class="step-btn" id="roundMinus" aria-label="Tour précédent">−</button>
+          <span class="val" id="roundVal">1</span>
+          <button class="step-btn" id="roundPlus" aria-label="Tour suivant">+</button>
+        </div>
+      </div>
+      <div class="sheet-foot">
+        <button class="link" id="sheetReset">Recommencer</button>
+        <button class="btn primary" id="sheetClose">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ================= DONNÉES (baked in) =================
+   question = « Qu'est-ce que le projet <name>? »
+   answer   = ce que l'HONNÊTE reformule de mémoire (naturel à l'oral, sans « vous »)
+   reveal   = la vraie description, affichée à tout le monde en fin de tour */
+const PROJECTS = [
+  { emoji:"✈️", name:"Avion Cargo",
+    answer:`Un avion cargo autonome, capable d'accomplir différentes missions — entre conception, électronique et intelligence artificielle.`,
+    reveal:`L'équipe conçoit un avion cargo autonome — de la structure à l'électronique jusqu'à l'IA embarquée. La pièce vedette du moment : AUTOLANDER, un atterrissage de précision où une caméra sur Raspberry Pi repère des marqueurs visuels (ArUco) et calcule en temps réel la position et l'orientation de l'appareil. L'objectif est redoutable : viser moins d'un pixel d'erreur pour poser l'avion pile sur sa cible.` },
+  { emoji:"🦌", name:"BioVision",
+    answer:`L'analyse automatique de vidéos de caribous par intelligence artificielle, pour étudier leur environnement et leurs comportements.`,
+    reveal:`Sur la Côte-Nord, des caribous portent des colliers-caméras qui filment leur quotidien : ça donne plusieurs téraoctets de vidéo qu'il faudrait éplucher à la main, des centaines d'heures de travail. BioVision entraîne une IA de vision par ordinateur (PyTorch, YOLO) pour tout analyser automatiquement — reconnaître la végétation, l'eau, la neige, puis les comportements. Un vrai projet de recherche, avec de vraies données de terrain, au service d'une espèce menacée.` },
+  { emoji:"🚦", name:"NavFlow",
+    answer:`Un logiciel qui optimise la circulation routière et les feux grâce à l'apprentissage par renforcement.`,
+    reveal:`NavFlow s'attaque aux bouchons. L'équipe bâtit un simulateur de trafic urbain où une IA, par apprentissage par renforcement, apprend à orchestrer les feux et les intersections pour fluidifier le réseau. On peut voir en direct l'effet du modèle sur des mesures concrètes, comme le temps d'attente moyen à une intersection.` },
+  { emoji:"🐦", name:"FlapEEG",
+    answer:`Un jeu vidéo contrôlé par la pensée, avec un casque EEG qui détecte les intentions de mouvement.`,
+    reveal:`FlapEEG, c'est jouer à Flappy Bird… par la pensée. L'équipe code le jeu de zéro, puis le branche à un casque EEG qui capte l'activité électrique du cerveau pour détecter ton intention de faire battre des ailes. Une vraie interface cerveau-machine, transformée en jeu vidéo.` },
+  { emoji:"🩸", name:"HemoMentor",
+    answer:`Un assistant intelligent qui comprend l'interface d'une machine d'hémolyse et guide l'utilisateur étape par étape.`,
+    reveal:`Les interfaces des appareils médicaux peuvent être intimidantes, surtout pour les personnes âgées ou avec des limitations. HemoMentor est un assistant intelligent qui « lit » l'écran de la machine et guide l'usager étape par étape. En combinant vision par ordinateur et modèles vision-langage, tu peux demander « où est-ce que j'appuie pour continuer? » : le système pointe le bon bouton, puis vérifie avec la caméra que ton doigt s'en approche. Un projet qui vise une publication scientifique.`,
+    partner:{ lead:"En partenariat avec", name:"Utili-M" } },
+  { emoji:"🚗", name:"F1 Tenth",
+    answer:`Une voiture de course miniature pilotée avec les gestes de la main, grâce à un bracelet qui mesure l'activité musculaire (EMG).`,
+    reveal:`F1 Tenth (alias F1-Jedi) : piloter une voiture de course miniature avec les gestes de ta main. Un bracelet EMG mesure l'activité de tes muscles — fléchir le pouce accélère, tourner le poignet dirige — et le tout est converti en commandes. Astuce maligne : l'équipe s'entraîne d'abord dans le jeu TrackMania, en simulation, avant de risquer la vraie voiture.` },
+  { emoji:"🧠", name:"Synthetic Consumer Lab",
+    answer:`Une population virtuelle d'agents IA pour simuler les comportements et les décisions de vrais consommateurs.`,
+    reveal:`Et si on testait une idée sur des milliers de consommateurs… sans déranger personne? Synthetic Consumer Lab génère une population synthétique de milliers d'agents IA, chacun avec un profil réaliste (âge, revenu, famille, région) inspiré de données du Québec et du Canada, puis enrichi par un grand modèle de langage pour raisonner de façon plausible. On peut ainsi faire passer un sondage virtuel avant de le mener auprès de vrais citoyens.` },
+  { emoji:"🚁", name:"Drone",
+    answer:`Un système de laser tag autonome pour une compétition interuniversitaire de drones pilotés par intelligence artificielle.`,
+    reveal:`L'équipe Drone veut lancer une compétition interuniversitaire de laser tag… entre drones autonomes. Ça demande un système d'armement laser « production ready » : un circuit imprimé maison (pas juste un Arduino), des capteurs infrarouges à 180°, un microcontrôleur embarqué. Et un ordinateur central qui garde l'état de la partie pour empêcher la triche et afficher un classement en direct.` },
+  { emoji:"🤖", name:"Poppy Humanoid",
+    answer:`Un robot humanoïde qui apprend à marcher, grâce à une IA entraînée en simulation avant d'être testée sur le vrai robot.`,
+    reveal:`Apprendre à marcher à un robot humanoïde, c'est tout un défi : le robot Poppy compte 25 moteurs à coordonner en même temps. L'équipe utilise l'apprentissage par renforcement (PyTorch, OpenAI Gym) pour entraîner l'IA d'abord en simulation, puis transférer ce qu'elle a appris sur le vrai robot. Chaque décision doit synchroniser plusieurs articulations à la fois.`,
+    partner:{ lead:"Sponsorisé par", name:"Vooban" } },
+];
+
+const TOTAL_ROUNDS = 9; // une partie = les 9 projets
+
+const ROLES = {
+  IGNORANT: { key:"IGNORANT", emoji:"🧐", name:"Ignorant", css:"ignorant" },
+  HONNETE:  { key:"HONNETE",  emoji:"🤓", name:"Honnête",  css:"honnete"  },
+  MENTEUR:  { key:"MENTEUR",  emoji:"🥸", name:"Menteur",  css:"menteur"  },
+};
+
+/* ================= ÉTAT ================= */
+const LS_KEY = "cia-fishy-v1";
+let state = { N:null, num:null, round:1, score:0, flood:false };
+
+function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
+function load(){
+  try{ const r = localStorage.getItem(LS_KEY); if(r) state = Object.assign(state, JSON.parse(r)); }catch(e){}
+}
+
+/* ================= RÔLES — déterministe, équilibré, difficile à prédire =================
+   • IGNORANT tourne 1→2→3…→N→1 (public : il lit la question de toute façon).
+   • HONNÊTE suit une séquence taillée pour la partie de 9 tours : chaque joueur est
+     garanti HONNÊTE au moins une fois par fenêtre de N+1 tours (donc tout le monde touche
+     aux trois rôles), sans jamais coïncider avec l'IGNORANT, et sans repère simple à
+     déduire (ce n'est pas « l'IGNORANT + un décalage fixe »). Vérifié à la main pour
+     N = 5, 6, 7 : toute fenêtre de N+1 tours consécutifs contient les N joueurs. */
+const HONNETE_SEQ = {
+  5: [3,5,4,1,2,5,3,4,2],
+  6: [3,5,1,6,2,4,5,3,1],
+  7: [4,6,1,7,3,2,5,6,4],
+};
+function ignorantOf(round, N){ return ((round - 1) % N) + 1; }
+function honnetteOf(round, N){
+  const seq = HONNETE_SEQ[N];
+  if(seq && round >= 1 && round <= seq.length) return seq[round - 1];
+  const m = (round - 1) % N; return ((m + 2) % N) + 1; // filet : jamais l'IGNORANT (N ≥ 3)
+}
+function roleOf(player, round, N){
+  if(player === ignorantOf(round, N)) return "IGNORANT";
+  if(player === honnetteOf(round, N)) return "HONNETE";
+  return "MENTEUR";
+}
+function projectOf(round){ return PROJECTS[(round - 1) % PROJECTS.length]; }
+function questionOf(round){ return "Qu'est-ce que le projet " + projectOf(round).name + "?"; }
+
+/* ================= NAVIGATION ================= */
+const screens = ["home","setupN","setupNum","role","scored","score"];
+function show(id){
+  screens.forEach(s => { document.getElementById(s).hidden = (s !== id); });
+  const sc = document.getElementById(id);
+  if(sc) sc.scrollTop = 0;
+}
+
+/* ================= RENDU DU RÔLE ================= */
+function renderRole(){
+  const { num, round, N } = state;
+  const rk = roleOf(num, round, N);
+  const role = ROLES[rk];
+  const proj = projectOf(round);
+  const q = questionOf(round);
+
+  const sec = document.getElementById("role");
+  sec.style.setProperty("--rc", `var(--c-${role.css})`);
+  sec.style.setProperty("--rv", `var(--v-${role.css})`);
+  sec.classList.toggle("flood", !!state.flood);
+  if(state.flood){ sec.style.animation = "none"; void sec.offsetWidth; sec.style.animation = ""; } // relance « pop »
+
+  document.getElementById("roleTour").textContent = "Tour " + round;
+  document.getElementById("roleEmoji").textContent = role.emoji;
+  document.getElementById("roleName").textContent = role.name.toUpperCase();
+
+  const card = document.getElementById("roleCard");
+  if(rk === "IGNORANT"){
+    card.innerHTML =
+      `<p class="card-label">La question</p>
+       <p class="card-q">« ${q} »</p>
+       <p class="card-hint">C'est toi qui mènes ce tour-ci. Écoute les réponses, puis élimine les MENTEURS un par un.</p>`;
+  } else if(rk === "HONNETE"){
+    card.innerHTML =
+      `<p class="card-label">Reformule dans tes mots</p>
+       <p class="card-body">${proj.answer}</p>
+       <p class="card-hint">Tu dois répondre sans regarder ton écran.</p>`;
+  } else {
+    card.innerHTML =
+      `<p class="card-body">Invente une réponse crédible. Ne te fais pas démasquer.</p>`;
+  }
+  save();
+}
+
+/* ================= AS-TU MARQUÉ ? ================= */
+function renderScored(){
+  const { num, round, N } = state;
+  const rk = roleOf(num, round, N);
+  const role = ROLES[rk];
+  document.getElementById("scoredTour").textContent = "Tour " + round;
+  document.getElementById("scoredEmoji").textContent = role.emoji;
+
+  const q = document.getElementById("scoredQ");
+  const hint = document.getElementById("scoredHint");
+  const ynBox = document.getElementById("ynBox");
+  const cont = document.getElementById("scoredContinue");
+
+  if(rk === "IGNORANT"){
+    q.textContent = "As-tu démasqué tous les menteurs?";
+    hint.textContent = "";
+    ynBox.hidden = false; cont.hidden = true;
+  } else if(rk === "MENTEUR"){
+    q.textContent = "As-tu marqué un point?";
+    hint.innerHTML = "Tu marques si l'IGNORANT a éliminé l'HONNÊTE<br>alors que tu étais encore en jeu.";
+    ynBox.hidden = false; cont.hidden = true;
+  } else { // HONNÊTE
+    q.textContent = "L'honnête ne marque pas de points.";
+    hint.textContent = "";
+    ynBox.hidden = true; cont.hidden = false;
+  }
+}
+
+/* ================= SCORE ================= */
+function renderScore(){
+  const { round } = state;
+  const final = round >= TOTAL_ROUNDS;
+  document.getElementById("toMenuScore").hidden = !final;
+
+  const eyebrow = document.getElementById("scoreTour");
+  eyebrow.hidden = !final;            // « Tour N terminé » supprimé ; « Partie terminée » à la fin
+
+  document.getElementById("scoreVal").textContent = state.score;
+  document.getElementById("scoreUnit").textContent = state.score < 2 ? "pt" : "pts";
+
+  // La vraie description du projet — pour TOUT le monde, à chaque fin de tour.
+  const proj = projectOf(round);
+  document.getElementById("revEmoji").textContent = proj.emoji;
+  document.getElementById("revName").textContent = proj.name;
+  document.getElementById("revText").textContent = proj.reveal;
+  const revP = document.getElementById("revPartner");
+  if(proj.partner){ revP.textContent=""; revP.append(document.createTextNode(proj.partner.lead+" ")); const n=document.createElement("b"); n.textContent=proj.partner.name; revP.append(n); revP.hidden=false; }
+  else { revP.hidden=true; }
+  document.getElementById("reveal").hidden = false;
+
+  const nextBtn = document.getElementById("nextBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  if(final){
+    nextBtn.hidden = true;
+    document.getElementById("projectCta").hidden = false;
+    resetBtn.textContent = "Nouvelle partie";
+    resetBtn.className = "link";
+  } else {
+    document.getElementById("projectCta").hidden = true;
+    nextBtn.hidden = false;
+    resetBtn.textContent = "Recommencer";
+    resetBtn.className = "link";
+  }
+  save();
+}
+
+/* ================= FLUX ================= */
+function buildNumGrid(){
+  const grid = document.getElementById("numGrid");
+  grid.innerHTML = "";
+  for(let i=1;i<=state.N;i++){
+    const b = document.createElement("button");
+    b.className = "chip"; b.textContent = i; b.setAttribute("aria-pressed","false");
+    b.addEventListener("click", ()=>{ state.num = i; state.round = 1; state.score = 0; save(); renderRole(); show("role"); });
+    grid.appendChild(b);
+  }
+}
+
+document.querySelectorAll("[data-go]").forEach(el=>{
+  el.addEventListener("click", ()=> show(el.getAttribute("data-go")) );
+});
+
+document.getElementById("nChoices").addEventListener("click", e=>{
+  const b = e.target.closest("[data-n]"); if(!b) return;
+  state.N = +b.getAttribute("data-n");
+  document.querySelectorAll("#nChoices .chip").forEach(c=>c.setAttribute("aria-pressed", c===b ? "true":"false"));
+  buildNumGrid();
+  show("setupNum");
+});
+
+document.getElementById("endRoundBtn").addEventListener("click", ()=>{ renderScored(); show("scored"); });
+document.getElementById("scoredYes").addEventListener("click", ()=>{ state.score += 1; renderScore(); show("score"); });
+document.getElementById("scoredNo").addEventListener("click", ()=>{ renderScore(); show("score"); });
+document.getElementById("scoredContinue").addEventListener("click", ()=>{ renderScore(); show("score"); });
+document.getElementById("nextBtn").addEventListener("click", ()=>{
+  if(state.round >= TOTAL_ROUNDS) return;
+  state.round += 1; save(); renderRole(); show("role");
+});
+
+function hardReset(){
+  const keepFlood = state.flood;
+  state = { N:null, num:null, round:1, score:0, flood:keepFlood };
+  try{ localStorage.removeItem(LS_KEY); }catch(e){}
+  document.querySelectorAll("#nChoices .chip").forEach(c=>c.setAttribute("aria-pressed","false"));
+  closeSheet();
+  show("home");
+}
+document.getElementById("resetBtn").addEventListener("click", hardReset);
+
+/* ================= RÉGLAGES ================= */
+const sheet = document.getElementById("sheet");
+function openSheet(){
+  const setN = document.getElementById("setN"); setN.innerHTML = "";
+  [5,6,7].forEach(n=>{
+    const b = document.createElement("button");
+    b.className = "mini"; b.textContent = n; b.setAttribute("aria-pressed", state.N===n ? "true":"false");
+    b.addEventListener("click", ()=>{
+      state.N = n; if(state.num > n) state.num = n;
+      renderSetNum(); [...setN.children].forEach(c=>c.setAttribute("aria-pressed", c===b?"true":"false")); save();
+    });
+    setN.appendChild(b);
+  });
+  renderSetNum();
+  syncFloodButtons();
+  document.getElementById("roundVal").textContent = state.round;
+  sheet.hidden = false;
+}
+function renderSetNum(){
+  const setNum = document.getElementById("setNum"); setNum.innerHTML = "";
+  for(let i=1;i<=state.N;i++){
+    const b = document.createElement("button");
+    b.className = "mini"; b.textContent = i; b.setAttribute("aria-pressed", state.num===i ? "true":"false");
+    b.addEventListener("click", ()=>{ state.num = i; [...setNum.children].forEach(c=>c.setAttribute("aria-pressed", c===b?"true":"false")); save(); });
+    setNum.appendChild(b);
+  }
+}
+function syncFloodButtons(){
+  document.querySelectorAll("#setFlood .mini").forEach(b=>{
+    b.setAttribute("aria-pressed", (b.getAttribute("data-flood")==="1") === !!state.flood ? "true":"false");
+  });
+}
+document.getElementById("setFlood").addEventListener("click", e=>{
+  const b = e.target.closest("[data-flood]"); if(!b) return;
+  state.flood = b.getAttribute("data-flood") === "1";
+  syncFloodButtons(); save();
+});
+function closeSheet(){ sheet.hidden = true; }
+document.getElementById("gearBtn").addEventListener("click", openSheet);
+document.getElementById("roundMinus").addEventListener("click", ()=>{ state.round = Math.max(1, state.round-1); document.getElementById("roundVal").textContent = state.round; save(); });
+document.getElementById("roundPlus").addEventListener("click", ()=>{ state.round = Math.min(TOTAL_ROUNDS, state.round+1); document.getElementById("roundVal").textContent = state.round; save(); });
+document.getElementById("sheetClose").addEventListener("click", ()=>{ closeSheet(); renderRole(); show("role"); });
+document.getElementById("sheetReset").addEventListener("click", hardReset);
+sheet.addEventListener("click", e=>{ if(e.target === sheet){ closeSheet(); renderRole(); show("role"); } });
+
+/* ================= DÉMARRAGE ================= */
+load();
+if(state.N && state.num){ renderRole(); show("role"); }
+else { show("home"); }
+</script>
+</body>
+</html>
