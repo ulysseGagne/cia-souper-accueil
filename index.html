@@ -41,6 +41,7 @@ img{max-width:100%}
 
 /* la tuile-lien — profondeur par SCALE + z-index (pas de 3-D : garde chaque lien cliquable) */
 .poste{--w:clamp(112px,28vw,212px);display:block;text-decoration:none;color:inherit;position:relative;
+  -webkit-tap-highlight-color:transparent;
   margin:0 calc(var(--w) * -0.055);transform:var(--tf,none);
   backface-visibility:hidden;will-change:transform;
   transition:transform .18s cubic-bezier(.2,.9,.3,1);border-radius:calc(var(--w)*.16)}

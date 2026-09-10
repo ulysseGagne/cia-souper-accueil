@@ -462,7 +462,8 @@ let state = { N:null, num:null, round:1, score:0, flood:false };
 
 function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
 function load(){
-  try{ const r = localStorage.getItem(LS_KEY); if(r) state = Object.assign(state, JSON.parse(r)); }catch(e){}
+  /* reset par défaut à chaque ouverture du lien : aucun réglage (nb joueurs, numéro) repris */
+  try{ localStorage.removeItem(LS_KEY); }catch(e){}
 }
 
 /* ================= RÔLES — déterministe, équilibré, difficile à prédire =================

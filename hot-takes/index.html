@@ -219,6 +219,13 @@
 
   /* ---- PICK YOUR FIGHTER ---- */
   .fighters{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;min-height:0;align-content:center}
+  /* pick → liste défilante (tous les projets) */
+  .picklist{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:2px 2px 6px;-webkit-overflow-scrolling:touch}
+  .pickrow{display:flex;flex-direction:column;gap:3px;text-align:left;border-radius:16px;padding:13px 16px;background:#fff;border:1.5px solid var(--line-2);border-left:6px solid var(--pc,#ff5a1f);box-shadow:0 6px 16px rgba(36,19,9,.06);transition:transform .09s ease}
+  .pickrow:active{transform:scale(.985)}
+  .pickrow:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .pickrow .pk-name{font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.01em;color:var(--ink);line-height:1.05}
+  .pickrow .pk-desc{font-family:var(--mono);font-weight:500;font-size:12px;line-height:1.4;color:var(--ink-2)}
   .fighter{border-radius:20px;padding:16px 15px;display:flex;flex-direction:column;gap:6px;justify-content:flex-end;
     color:#fff;text-align:left;min-height:26vh;position:relative;overflow:hidden;transition:transform .1s ease,filter .15s ease;box-shadow:0 12px 26px rgba(0,0,0,.12);}
   .fighter::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 80% 0%,rgba(255,255,255,.28),transparent 55%);pointer-events:none}
@@ -245,11 +252,13 @@
   .swipe-card:active{cursor:grabbing}
   .swipe-card .sc-icon{font-size:66px;line-height:1;color:var(--ink)}
   .swipe-card .sc-text{font-family:var(--display);font-weight:800;font-size:clamp(22px,6vw,28px);letter-spacing:-.01em;line-height:1.1}
-  .swipe-card .sc-svg{width:100%;height:auto;display:block}
-  .swipe-card .sc-svg text{font-family:var(--display);font-weight:800;fill:var(--ink)}
-  .swipe-card .sc-svg .scv-1{font-size:76px}
-  .swipe-card .sc-svg .scv-2{font-size:46px}
-  .swipe-card .sc-svg .scv-3{font-size:17px;font-weight:600;fill:var(--ink-2)}
+  .swipe-stack{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative;width:100%}
+  .swipe-card .sc-spark{font-size:clamp(48px,14vw,74px);line-height:1;margin-bottom:8px}
+  .swipe-card .sc-term{font-family:var(--display);font-weight:800;font-size:clamp(30px,8.6vw,46px);letter-spacing:-.02em;line-height:1;color:var(--ink);text-align:center}
+  .ans-sp{display:flex;flex-direction:column;gap:10px;width:100%;max-width:420px;margin:8px 0;text-align:left}
+  .ans-sp-row{display:flex;align-items:baseline;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.18);padding-bottom:9px}
+  .ans-sp .asp-term{font-family:var(--display);font-weight:800;font-size:clamp(22px,6vw,30px);letter-spacing:-.01em}
+  .ans-sp .asp-verdict{font-family:var(--display);font-weight:800;font-size:clamp(18px,5vw,24px);flex:none}
   .swipe-stamp{position:absolute;top:22px;font-family:var(--display);font-weight:800;font-size:34px;letter-spacing:.02em;
     padding:6px 16px;border:4px solid;border-radius:12px;opacity:0;pointer-events:none}
   .swipe-stamp.smash{right:20px;color:#ff2d55;border-color:#ff2d55;transform:rotate(16deg)}
@@ -355,10 +364,8 @@
   .end .end-form:active{transform:scale(.97)}
   @keyframes pop{from{transform:scale(.97);opacity:.4}to{transform:none;opacity:1}}
 
-  .ans-tier{display:flex;flex-direction:column;gap:6px;width:100%;max-width:440px;margin:4px 0}
-  .ans-tier-row{display:flex;align-items:stretch;gap:8px;min-height:44px;border-radius:10px;overflow:hidden;background:rgba(0,0,0,.16)}
-  .ans-tier-row .at-key{width:42px;flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:20px;color:#151013}
-  .ans-tier-row .at-items{flex:1;display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:6px 8px;font-family:var(--mono);font-weight:600;font-size:12.5px;text-align:left}
+  .ans-tierlist{list-style:none;margin:10px 0 0;padding:0;text-align:left}
+  .ans-tierlist li{font-family:var(--display);font-weight:800;font-size:clamp(26px,7.4vw,44px);line-height:1.16;letter-spacing:-.02em}
 
   .ans-fmk{display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px;margin:4px 0}
   .ans-fmk-band{display:flex;align-items:center;justify-content:space-between;gap:14px;border-radius:14px;padding:16px 18px;color:#fff}
@@ -542,8 +549,7 @@ const ANNEES = [
 
 /* ---- Tier list : S (top) → F (fond) ---- */
 const TIERS = [
-  { key:"S",color:"#ffd23f" },{ key:"A",color:"#7ee081" },{ key:"B",color:"#5ec6ff" },
-  { key:"C",color:"#b69bff" },{ key:"D",color:"#ff9f45" },{ key:"F",color:"#ff5d73" },
+  { key:"S",color:"#ffd23f" },{ key:"A",color:"#7ee081" },{ key:"B",color:"#5ec6ff" },{ key:"C",color:"#b69bff" },
 ];
 
 /* ---- Date / Marry / Kill (version PG, mots explicites — pas d'acronyme) ---- */
@@ -574,12 +580,15 @@ const QUESTIONS = [
     plabel:"projet qui m'intéresse", bg:"var(--paper)", dark:false,
     cta:{ label:"Embarque dans le projet →", url:"https://forms.cloud.microsoft/r/np4xP3HYBf" },
     options:[
-      { key:"flapeeg",  label:"FlapEEG",           color:"#ff5a1f", desc:"jouer à Flappy Bird par la pensée (EEG)" },
-      { key:"f1",       label:"F1 par tes muscles", color:"#e11d33", desc:"piloter une F1 par tes signaux musculaires" },
-      { key:"drone",    label:"Drones laser-tag",   color:"#3a6ff0", desc:"des drones autonomes qui se tirent dessus" },
-      { key:"poppy",    label:"Robot humanoïde",    color:"#8250c4", desc:"lui apprendre à marcher (renforcement)" },
-      { key:"biovision",label:"BioVision",          color:"#2fa84f", desc:"l'IA qui analyse des caribous" },
-      { key:"avion",    label:"Avion cargo",        color:"#00b3a4", desc:"atterrissage autonome par vision" },
+      { key:"flapeeg",  label:"FlapEEG",                color:"#ff5a1f", desc:"jouer à Flappy Bird par la pensée (EEG)" },
+      { key:"f1",       label:"F1 Tenth",               color:"#e11d33", desc:"piloter une F1 miniature par tes muscles (EMG)" },
+      { key:"drone",    label:"Drone",                  color:"#3a6ff0", desc:"des drones autonomes en laser-tag" },
+      { key:"poppy",    label:"Poppy Humanoid",         color:"#8250c4", desc:"apprendre à marcher à un robot humanoïde" },
+      { key:"biovision",label:"BioVision",              color:"#2fa84f", desc:"l'IA qui analyse des vidéos de caribous" },
+      { key:"avion",    label:"Avion Cargo",            color:"#00b3a4", desc:"un avion cargo qui atterrit tout seul (vision)" },
+      { key:"navflow",  label:"NavFlow",                color:"#ffb020", desc:"optimiser le trafic et les feux (renforcement)" },
+      { key:"hemo",     label:"HemoMentor",             color:"#ff2d55", desc:"un assistant qui guide sur une machine médicale" },
+      { key:"synthlab", label:"Synthetic Consumer Lab", color:"#7c5cff", desc:"des agents IA qui simulent de vrais consommateurs" },
     ],
   },
   // 4 — rate : hype LLM vs le camp « vrai ML »
@@ -593,8 +602,8 @@ const QUESTIONS = [
   },
   // 5 — smash / pass : vibecoding (faut glisser, pas cliquer)
   {
-    id:"vibecoding", format:"swipe", hero:"Smash or pass",
-    plabel:"vibecoding", cardBig:"VIBE\nCODING", cardSub:"Sans regarder le code",
+    id:"vibecoding", format:"swipe", hero:"Smash or pass", plabel:"smash / pass",
+    cards:[ { key:"vibecoding", label:"Vibecoding", emoji:"✨" }, { key:"agents", label:"Agents\nIA", emoji:"🐜" }, { key:"prompt", label:"Prompt\nengineering", emoji:"🎯" } ],
     bg:"linear-gradient(180deg,#171a24,#0e0f15)", dark:true,
     options:[ { key:"smash", label:"Smash", color:"#ff2d55" }, { key:"pass", label:"Pass", color:"#2f6bff" } ],
   },
@@ -654,7 +663,7 @@ const QUESTIONS = [
       { label:"Techno-optimiste", short:"techno-optimiste", icon:"spark", color:"#00b3a4" },
       { label:"Catastrophiste",   short:"catastrophiste",   icon:"skull", color:"#ff2d55" },
     ],
-    zones:[ "techno-optimiste à fond", "plutôt confiant", "pile au centre", "plutôt inquiet", "catastrophiste fini" ],
+    zones:[ "techno-optimiste à fond", "plutôt confiant", "plutôt inquiet", "catastrophiste fini" ],
   },
   // 13 — this or that (cartes) : ta job quand tu gradues — clôture perso
   {
@@ -676,7 +685,8 @@ let editing = false;
 let specVal = 2;
 
 function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
-function load(){ try{ const r = localStorage.getItem(LS_KEY); if(r){ const p=JSON.parse(r); if(p && p.v===4) state = Object.assign(state, p); } }catch(e){} }
+/* reset par défaut à chaque ouverture du lien : on repart toujours de l'accueil, aucun état repris */
+function load(){ try{ localStorage.removeItem(LS_KEY); }catch(e){} }
 
 /* ================= OUTILS ================= */
 function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -785,26 +795,19 @@ function askHTML(q){
           <button class="btn ghost deposit" id="textDeposit" style="border-color:rgba(255,255,255,.6);color:#fff">Déposer →</button>
         </div>`;
     case "pick":
-      return headHTML(q,true) + `<div class="fighters${q.options.length>4?' compact':''}">` + q.options.map(o =>
-        `<button class="fighter" data-key="${o.key}" style="background:${o.color}">${o.icon?`<span class="fi-icon">${icon(o.icon)}</span>`:""}<span class="fi-name">${esc(o.label)}</span>${o.desc?`<span class="fi-desc">${esc(o.desc)}</span>`:""}</button>`).join("") + `</div>`;
+      return headHTML(q,true) + `<div class="picklist">` + q.options.map(o =>
+        `<button class="pickrow" data-key="${o.key}" style="--pc:${o.color}"><span class="pk-name">${esc(o.label)}</span>${o.desc?`<span class="pk-desc">${esc(o.desc)}</span>`:""}</button>`).join("") + `</div>`;
     case "swipe": {
-      let scInner;
-      if(q.cardBig){
-        const L=q.cardBig.split("\n"), W=300, TL=280, X=150;
-        scInner = `<svg class="sc-svg" viewBox="0 0 ${W} 184" preserveAspectRatio="xMidYMid meet" aria-hidden="true">`
-          + `<text x="${X}" y="72" text-anchor="middle" textLength="${TL}" lengthAdjust="spacingAndGlyphs" class="scv-1">${esc(L[0]||"")}</text>`
-          + `<text x="${X}" y="126" text-anchor="middle" textLength="${TL}" lengthAdjust="spacingAndGlyphs" class="scv-2">${esc(L[1]||"")}</text>`
-          + (q.cardSub ? `<text x="${X}" y="164" text-anchor="middle" textLength="${TL}" lengthAdjust="spacingAndGlyphs" class="scv-3">${esc(q.cardSub)}</text>` : "")
-          + `</svg>`;
-      } else {
-        scInner = `<div class="sc-icon">${icon(q.icon)}</div><div class="sc-text">${esc(q.prompt)}</div>`;
-      }
+      const cards = q.cards || [{key:q.id, label:(q.prompt||"")}];
+      const stack = cards.map((c,i)=>
+        `<div class="swipe-card" data-key="${c.key}" data-i="${i}"${i===0?"":" hidden"}>`
+        + `<div class="swipe-stamp smash">SMASH</div><div class="swipe-stamp pass">PASS</div>`
+        + `<div class="sc-spark" aria-hidden="true">${c.emoji||"✨"}</div>`
+        + `<div class="sc-term">${esc(c.label).replace(/\n/g,"<br>")}</div>`
+        + `</div>`).join("");
       return headHTML(q,true) + `<div class="swipe-wrap">
           <div class="swipe-guide"><span class="pass">‹ Pass</span><span class="smash">Smash ›</span></div>
-          <div class="swipe-card" id="swipeCard">
-            <div class="swipe-stamp smash" id="stampSmash">SMASH</div><div class="swipe-stamp pass" id="stampPass">PASS</div>
-            ${scInner}
-          </div>
+          <div class="swipe-stack" id="swipeStack">${stack}</div>
           <div class="swipe-tip">glisse la carte ←→</div>
         </div>`;
     }
@@ -893,22 +896,28 @@ function wireAsk(q){
 }
 
 function wireSwipe(q){
-  const card=stage.querySelector("#swipeCard"), stampS=stage.querySelector("#stampSmash"), stampP=stage.querySelector("#stampPass");
+  /* pile multi-cartes : chaque carte se glisse smash/pass, puis on dépose l'ensemble des verdicts */
+  const cards = q.cards || [{key:q.id, label:(q.prompt||"")}];
+  const stackEl = stage.querySelector("#swipeStack");
+  const cardEls = [...stackEl.querySelectorAll(".swipe-card")];
   const smashKey=q.options[0].key, passKey=q.options[1].key, reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
   const base=q.bg||"var(--paper)";
-  let startX=0, cur=0, dragging=false;
-  /* le fond se teinte vers le rouge (smash, droite) ou le bleu (pass, gauche) pendant le glissé */
-  const tint=dx=>{ const f=Math.max(0,Math.min(1,Math.abs(dx)/150));
-    if(f<=0){ playEl.style.background=base; return; }
-    const col=dx>0?"255,45,85":"47,107,255";
-    playEl.style.background=`linear-gradient(180deg,rgba(${col},${0.92*f}),rgba(${col},${0.66*f})), ${base}`; };
-  const fly=(dir,key)=>{ if(reduce){ commit(q.id,key); return; } card.style.transition="transform .28s ease,opacity .28s ease"; card.style.transform=`translateX(${dir*140}%) rotate(${dir*22}deg)`; card.style.opacity="0"; setTimeout(()=>commit(q.id,key),220); };
-  const setDrag=dx=>{ cur=dx; card.style.transform=`translateX(${dx}px) rotate(${dx/18}deg)`; stampS.style.opacity=dx>0?Math.min(1,dx/90):0; stampP.style.opacity=dx<0?Math.min(1,-dx/90):0; tint(dx); };
-  card.addEventListener("pointerdown",e=>{ dragging=true; startX=e.clientX; card.style.transition="none"; card.style.animation="none"; card.setPointerCapture(e.pointerId); });
-  card.addEventListener("pointermove",e=>{ if(dragging) setDrag(e.clientX-startX); });
-  const end=()=>{ if(!dragging) return; dragging=false; card.style.transition="transform .2s ease";
-    if(cur>90) fly(1,smashKey); else if(cur<-90) fly(-1,passKey); else { card.style.transform=""; stampS.style.opacity=0; stampP.style.opacity=0; playEl.style.background=base; } };
-  card.addEventListener("pointerup",end); card.addEventListener("pointercancel",end);
+  const verdicts={}; let idx=0, startX=0, cur=0, dragging=false, card=cardEls[0];
+  const tint=dx=>{ const f=Math.max(0,Math.min(1,Math.abs(dx)/150)); if(f<=0){ playEl.style.background=base; return; }
+    const col=dx>0?"255,45,85":"47,107,255"; playEl.style.background=`linear-gradient(180deg,rgba(${col},${0.92*f}),rgba(${col},${0.66*f})), ${base}`; };
+  const setDrag=dx=>{ cur=dx; if(!card) return; card.style.transform=`translateX(${dx}px) rotate(${dx/18}deg)`;
+    const s=card.querySelector(".swipe-stamp.smash"), p=card.querySelector(".swipe-stamp.pass");
+    if(s) s.style.opacity=dx>0?Math.min(1,dx/90):0; if(p) p.style.opacity=dx<0?Math.min(1,-dx/90):0; tint(dx); };
+  const mount=()=>{ cardEls.forEach((c,i)=>c.hidden=i!==idx); card=cardEls[idx]; cur=0; if(card){ card.style.transition="none"; card.style.transform=""; card.style.opacity=""; } };
+  const advance=key=>{ verdicts[cards[idx].key]=key; idx++; playEl.style.background=base;
+    if(idx>=cards.length){ commit(q.id, verdicts); return; } mount(); };
+  const fly=(dir,key)=>{ if(reduce){ advance(key); return; } card.style.transition="transform .28s ease,opacity .28s ease"; card.style.transform=`translateX(${dir*140}%) rotate(${dir*22}deg)`; card.style.opacity="0"; setTimeout(()=>advance(key),210); };
+  stackEl.addEventListener("pointerdown",e=>{ if(!card||e.target.closest(".swipe-card")!==card) return; dragging=true; startX=e.clientX; card.style.transition="none"; card.style.animation="none"; stackEl.setPointerCapture(e.pointerId); });
+  stackEl.addEventListener("pointermove",e=>{ if(dragging) setDrag(e.clientX-startX); });
+  const end=()=>{ if(!dragging) return; dragging=false; if(card) card.style.transition="transform .2s ease";
+    if(cur>90) fly(1,smashKey); else if(cur<-90) fly(-1,passKey); else { if(card) card.style.transform=""; setDrag(0); } };
+  stackEl.addEventListener("pointerup",end); stackEl.addEventListener("pointercancel",end);
+  mount();
 }
 
 /* would you rather : GLISSER seulement (pas de tap) — vers le haut = option du haut,
@@ -968,9 +977,10 @@ function wireBoard(q,kind){
     stage.querySelectorAll(".tier-drop,.fz-slot,#tierTray,#fmkTray").forEach(el=>el.innerHTML="");
     items.forEach(it=>{ const chip=document.createElement("button"); chip.className="tchip"+(selected===it.key?" sel":""); chip.dataset.chip=it.key; chip.textContent=it.label;
       chip.setAttribute("aria-pressed", selected===it.key?"true":"false");
-      if(it.color){ const inTray=place[it.key]==="__tray";
-        if(kind==="fmk"){ chip.style.background = inTray ? it.color : "#fff"; chip.style.color = inTray ? inkFor(it.color) : it.color; }
-        else { chip.style.background = it.color; chip.style.color = inkFor(it.color); } }
+      if(kind==="fmk" && it.color){ const inTray=place[it.key]==="__tray";
+        chip.style.background = inTray ? it.color : "#fff"; chip.style.color = inTray ? inkFor(it.color) : it.color; }
+      else if(kind==="tier"){ const zk=place[it.key];  // blanc dans le bac → prend la couleur de son tier une fois placé (encre foncée, comme les lettres de tier)
+        if(zk && zk!=="__tray"){ const tc=(TIERS.find(t=>t.key===zk)||{}).color; if(tc){ chip.style.background = tc; chip.style.color = "#151013"; } } }
       zoneNode(place[it.key]).appendChild(chip); });
     /* fmk : la case Date/Marry/Kill prend la couleur du modèle qu'on y dépose */
     if(kind==="fmk"){ FMK.forEach(v=>{ const z=stage.querySelector(`.fmk-zone[data-zone="${v.key}"]`); if(!z) return;
@@ -1034,8 +1044,11 @@ function renderAnswer(q,ans){
       stage.innerHTML=`<div class="ans"><p class="a-eyebrow">${esc(q.hero)}</p><div class="a-big txt">${esc(o.label)}</div></div>`; return;
     }
     case "swipe": {
-      const o=q.options.find(x=>x.key===ans); applyTheme(o.color, !isLight(o.color));
-      stage.innerHTML=`<div class="ans"><p class="a-prompt">${esc(q.prompt)}</p><div class="a-big">${esc(o.label)}</div></div>`; return;
+      applyTheme(q.bg, q.dark);
+      const sm=q.options[0], ps=q.options[1];
+      const rows=(q.cards||[]).map(c=>{ const isS=ans[c.key]===sm.key; const col=isS?sm.color:ps.color;
+        return `<div class="ans-sp-row"><span class="asp-term">${esc(c.label).replace(/\n/g," ")}</span><span class="asp-verdict" style="color:${col}">${isS?esc(sm.label):esc(ps.label)}</span></div>`; }).join("");
+      stage.innerHTML=`<div class="ans"><p class="a-eyebrow">${esc(q.hero)}</p><div class="ans-sp">${rows}</div></div>`; return;
     }
     case "multiselect": {
       applyTheme(q.bg, q.dark);
@@ -1064,9 +1077,9 @@ function renderAnswer(q,ans){
     }
     case "tier": {
       applyTheme(q.bg, q.dark);
-      const rows=TIERS.map(t=>{ const its=q.items.filter(it=>ans[it.key]===t.key).map(it=>esc(it.label)).join(" · ");
-        return `<div class="ans-tier-row"><div class="at-key" style="background:${t.color}">${t.key}</div><div class="at-items">${its||"—"}</div></div>`; }).join("");
-      stage.innerHTML=`<div class="ans"><p class="a-eyebrow">${esc(q.hero)}</p><p class="a-prompt">${esc(q.prompt)}</p><div class="ans-tier">${rows}</div></div>`; return;
+      const lis=[];
+      TIERS.forEach(t=> q.items.forEach(it=>{ if(ans[it.key]===t.key) lis.push(`<li style="color:${t.color}">${esc(it.label)}</li>`); }));
+      stage.innerHTML=`<div class="ans"><p class="a-eyebrow">${esc(q.hero)}</p><ul class="ans-tierlist">${lis.join("")}</ul></div>`; return;
     }
     case "fmk": {
       applyTheme(q.bg, q.dark);
@@ -1084,7 +1097,7 @@ function pval(q,ans){
   switch(q.format){
     case "this-or-that": case "pick": case "wyr": return q.options.find(o=>o.key===ans).label;
     case "multiselect": return (ans||[]).map(k=>q.options.find(o=>o.key===k).label).join(", ");
-    case "swipe": return q.options.find(o=>o.key===ans).label.toLowerCase();
+    case "swipe": return (q.cards||[]).map(c=>c.label.replace(/\n/g," ")+" "+(ans[c.key]===q.options[0].key?"smash":"pass")).join(" · ");
     case "flag": return ans==="red" ? "red flag" : "green flag";
     case "rate": return q.options.find(o=>o.key===ans).label.toLowerCase();
     case "text": return ans;
