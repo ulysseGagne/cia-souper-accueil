@@ -33,36 +33,34 @@ img{max-width:100%}
 .titre{margin:0;font-weight:800;letter-spacing:-.03em;line-height:.9;font-size:clamp(46px,12vw,104px)}
 .sous{margin:clamp(14px,3vw,24px) auto 0;max-width:38ch;font-weight:600;letter-spacing:-.012em;
   color:var(--ink-2);font-size:clamp(15px,3.3vw,23px);line-height:1.34}
-.hint{margin:clamp(16px,3.4vw,26px) auto 0;font-family:var(--mono);font-weight:500;
-  font-size:clamp(11px,2.7vw,13px);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);
-  display:inline-flex;align-items:center;gap:.6em}
-.hint .dot{width:7px;height:7px;border-radius:50%;background:var(--alarme);
-  box-shadow:0 0 0 0 rgba(225,29,51,.5);animation:pulse 2.2s ease-out infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(225,29,51,.45)}70%,100%{box-shadow:0 0 0 9px rgba(225,29,51,0)}}
+/* ---------- la rangée des trois jeux : ÉVENTAIL 3-D, exactement comme l'affiche ----------
+   centre (Coupable) devant (+105), côtés basculés ±5° et reculés (−40), marges négatives
+   pour que les appareils s'imbriquent. Tient sur un téléphone vertical : --w suit la largeur. */
+.rang{flex:1;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:0;
+  padding:clamp(18px,5vw,44px) 0}
 
-/* ---------- la rangée des trois jeux ---------- */
-.rang{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:clamp(30px,7vw,46px);padding:clamp(24px,5vw,44px) 0}
-@media(min-width:820px){
-  .rang{flex-direction:row;align-items:flex-end;justify-content:center;gap:clamp(6px,1.6vw,22px);perspective:1600px}
-}
-
-/* la tuile-lien */
-.poste{--w:min(248px,66vw);display:block;text-decoration:none;color:inherit;position:relative;
+/* la tuile-lien — profondeur par SCALE + z-index (pas de 3-D : garde chaque lien cliquable) */
+.poste{--w:clamp(112px,28vw,212px);display:block;text-decoration:none;color:inherit;position:relative;
+  margin:0 calc(var(--w) * -0.055);transform:var(--tf,none);
+  backface-visibility:hidden;will-change:transform;
   transition:transform .18s cubic-bezier(.2,.9,.3,1);border-radius:calc(var(--w)*.16)}
-.poste:hover{transform:translateY(-9px)}
-.poste:active{transform:translateY(-3px) scale(.99)}
-.poste:focus-visible{outline:3px solid var(--ink);outline-offset:9px;border-radius:calc(var(--w)*.18)}
-@media(min-width:820px){
-  .poste{--w:206px}
-  .poste:nth-child(1) .tel{transform:rotate(-6deg)}
-  .poste:nth-child(3) .tel{transform:rotate(6deg)}
-  .poste:nth-child(2){z-index:3;margin-bottom:16px}
-}
-@media(hover:none){ .poste:hover{transform:none} }
+.poste:nth-child(1){--tf:rotate(-5deg) scale(.93);z-index:1}
+.poste:nth-child(2){--tf:scale(1.09) translateY(-2%);z-index:3}
+.poste:nth-child(3){--tf:rotate(5deg) scale(.93);z-index:2}
+.poste:hover{transform:var(--tf,none) translateY(-4%)}
+.poste:active{transform:var(--tf,none) translateY(-1.5%)}
+.poste:focus-visible{outline:3px solid var(--ink);outline-offset:6px;border-radius:calc(var(--w)*.18)}
+@media(hover:none){ .poste:hover{transform:var(--tf,none)} }
+
+/* ombre d'occlusion dans la fente — le centre assombrit la lisière des deux voisins */
+.occl{position:absolute;inset:0;border-radius:calc(var(--w)*.152);pointer-events:none;z-index:5}
+.poste:nth-child(1) .occl{background:linear-gradient(270deg,rgba(24,17,8,.12) 0%,rgba(24,17,8,.04) 7%,transparent 20%)}
+.poste:nth-child(3) .occl{background:linear-gradient(90deg,rgba(24,17,8,.18) 0%,rgba(24,17,8,.07) 8%,transparent 22%)}
+.poste:nth-child(2) .occl{display:none}
 
 /* ---------- le châssis (proportions réelles 393×852), dérivé de l'affiche ---------- */
-.tel{--w:206px;width:var(--w);aspect-ratio:393/852;display:block;position:relative;
+.tel{width:var(--w);aspect-ratio:393/852;display:block;position:relative;
+  backface-visibility:hidden;
   border-radius:calc(var(--w)*.152);
   background:linear-gradient(145deg,#5b5f66,#24262b 22%,#16181c 50%,#2c2f35 78%,#63666d);
   padding:calc(var(--w)*.0115);
@@ -134,7 +132,6 @@ img{max-width:100%}
   <div class="tete">
     <h1 class="titre">Trois jeux.<br>Une poutine.</h1>
     <p class="sous">Présentation du club. Rencontres. Poutine gratuite. Trois jeux créés sur mesure pour la soirée.</p>
-    <p class="hint"><span class="dot" aria-hidden="true"></span>Touche un jeu pour jouer</p>
   </div>
 
   <div class="rang">
@@ -149,6 +146,7 @@ img{max-width:100%}
           <span class="cta">Commencer</span>
         </span>
       </span>
+      <span class="occl" aria-hidden="true"></span>
     </a>
 
     <!-- Coupable! -->
@@ -172,6 +170,7 @@ img{max-width:100%}
           <span class="cta">Voir les suspects</span>
         </span>
       </span>
+      <span class="occl" aria-hidden="true"></span>
     </a>
 
     <!-- The Bluff Game -->
@@ -184,6 +183,7 @@ img{max-width:100%}
           <span class="cta">Démasquer</span>
         </span>
       </span>
+      <span class="occl" aria-hidden="true"></span>
     </a>
 
   </div>

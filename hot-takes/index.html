@@ -80,19 +80,29 @@
     font-size:clamp(74px,22vw,142px);margin:0;display:inline-block;padding:.06em .16em;text-align:center;
     color:#fff;text-shadow:0 6px 24px rgba(140,20,0,.28);}
   .home-cta{width:min(360px,86vw);margin:0 auto;background:#fff;color:#ff3d2e;box-shadow:0 14px 30px rgba(120,10,0,.24)}
-  /* --- Retour au menu maitre (app Trois jeux) --- */
-  .to-menu{position:fixed;z-index:60;top:max(12px,env(safe-area-inset-top));
-    width:40px;height:40px;padding:0;border:none;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;text-decoration:none;
-    background:rgba(10,12,20,.42);color:#fff;cursor:pointer;
-    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  /* --- Retour au menu maître (app Trois jeux) --- */
+  /* Accueil (fond feu) : pastille blanche « ← Menu », un vrai corps de flèche, PAS un cercle noir */
+  .to-menu{position:fixed;z-index:60;top:max(13px,env(safe-area-inset-top));
+    display:inline-flex;align-items:center;gap:6px;padding:8px 14px 8px 10px;
+    border:none;border-radius:999px;text-decoration:none;cursor:pointer;
+    font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink);background:#fff;
+    box-shadow:0 5px 18px rgba(120,40,0,.26);
     transition:transform .09s ease, background .15s ease}
   .to-menu.tl{left:max(12px,env(safe-area-inset-left))}
-  .to-menu.tr{right:max(12px,env(safe-area-inset-right))}
-  .to-menu:hover{background:rgba(10,12,20,.62)}
-  .to-menu:active{transform:scale(.92)}
-  .to-menu:focus-visible{outline:3px solid #fff;outline-offset:2px}
-  .to-menu svg{width:20px;height:20px;display:block}
+  .to-menu:active{transform:scale(.93)}
+  .to-menu:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .to-menu svg{width:21px;height:21px;display:block;flex:none;color:var(--accent)}
+  /* Fin de partie : « Au menu → » vrai bouton en bas, à côté du CTA projet */
+  .menu-cta{width:min(340px,82vw);display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    padding:14px 22px;border-radius:14px;text-decoration:none;cursor:pointer;
+    font-family:var(--display);font-weight:800;font-size:16px;letter-spacing:-.01em;
+    background:#fff;color:var(--ink);border:1.6px solid var(--line-2);
+    box-shadow:0 8px 20px rgba(36,19,9,.1);
+    transition:transform .09s ease}
+  .menu-cta:active{transform:scale(.97)}
+  .menu-cta:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  .menu-cta svg{width:22px;height:22px;flex:none;color:var(--accent)}
   .home .tag{font-family:var(--mono);font-weight:600;font-size:clamp(15px,4.3vw,19px);line-height:1.35;
     color:#fff;margin:2px 0 0;text-align:center;letter-spacing:.005em}
 
@@ -183,15 +193,20 @@
   .wyr-title{position:absolute;z-index:2;left:50%;transform:translateX(-50%);
     top:calc(max(12px,env(safe-area-inset-top)) + 60px);background:#fff;color:#241309;border-radius:999px;padding:11px 22px;
     box-shadow:0 8px 24px rgba(0,0,0,.22);font-family:var(--display);font-weight:800;font-size:clamp(19px,5.6vw,26px);letter-spacing:-.01em;text-transform:uppercase;white-space:nowrap;pointer-events:none}
+  /* would you rather : « VS » noir en clair sur la fente blanche, immobile (ne suit pas le glissé) */
   .wyr-vs{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;
-    width:clamp(58px,17vw,74px);height:clamp(58px,17vw,74px);border-radius:50%;background:#1b1108;color:#fff;
-    display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:clamp(22px,7vw,30px);box-shadow:0 8px 22px rgba(0,0,0,.3)}
-  /* would you rather — deux moitiés séparées par une diagonale (les couleurs ne se touchent pas), glisser haut/bas */
+    font-family:var(--display);font-weight:800;font-size:clamp(30px,10vw,52px);color:#1b1108;letter-spacing:.02em;text-shadow:0 1px 0 rgba(255,255,255,.55)}
+  .wyr-cue{position:absolute;z-index:2;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);pointer-events:none;
+    font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#fff;opacity:.9;
+    background:rgba(0,0,0,.24);padding:7px 14px;border-radius:999px}
+  /* deux moitiés séparées par une LARGE fente blanche (les couleurs ne se touchent pas), glisser haut/bas */
   .split.diag{--seam:50%}
   .split.diag .half{position:absolute;inset:0;flex:none;flex-direction:column;transition:filter .14s ease}
-  .split.diag .half.top{justify-content:flex-start;padding-top:15vh;clip-path:polygon(0 0,100% 0,100% calc(var(--seam) - 5% - 6px),0 calc(var(--seam) + 5% - 6px))}
-  .split.diag .half.bot{justify-content:flex-end;padding-bottom:15vh;clip-path:polygon(0 calc(var(--seam) + 5% + 6px),100% calc(var(--seam) - 5% + 6px),100% 100%,0 100%)}
-  .split.diag .half.lit{filter:brightness(1.12)}
+  .split.diag .half.top{justify-content:flex-start;padding-top:11vh;clip-path:polygon(0 0,100% 0,100% calc(var(--seam) - 9% - 10px),0 calc(var(--seam) + 9% - 10px))}
+  .split.diag .half.bot{justify-content:flex-end;padding-bottom:11vh;clip-path:polygon(0 calc(var(--seam) + 9% + 10px),100% calc(var(--seam) - 9% + 10px),100% 100%,0 100%)}
+  .split.diag .half.lit{filter:brightness(1.14)}
+  .split.diag.wyr .hlabel{font-size:clamp(21px,5.6vw,30px);max-width:15ch;line-height:1.08;padding:0 22px}
+  .split.diag.wyr .half.top{padding-top:clamp(122px,20vh,176px)}  /* dégager la pastille du titre */
 
   /* ---- gros boutons (we're so back) ---- */
   .stack{display:flex;flex-direction:column;gap:16px;flex:1;min-height:0;justify-content:center}
@@ -230,6 +245,8 @@
   .swipe-card:active{cursor:grabbing}
   .swipe-card .sc-icon{font-size:66px;line-height:1;color:var(--ink)}
   .swipe-card .sc-text{font-family:var(--display);font-weight:800;font-size:clamp(22px,6vw,28px);letter-spacing:-.01em;line-height:1.1}
+  .swipe-card .sc-big{font-family:var(--display);font-weight:800;font-size:clamp(48px,16vw,86px);line-height:.9;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink)}
+  .swipe-card .sc-sub{font-family:var(--mono);font-weight:600;font-size:13px;letter-spacing:.02em;color:var(--ink-2);margin-top:16px;max-width:20ch}
   .swipe-stamp{position:absolute;top:22px;font-family:var(--display);font-weight:800;font-size:34px;letter-spacing:.02em;
     padding:6px 16px;border:4px solid;border-radius:12px;opacity:0;pointer-events:none}
   .swipe-stamp.smash{right:20px;color:#ff2d55;border-color:#ff2d55;transform:rotate(16deg)}
@@ -307,6 +324,17 @@
 
   .deposit{width:100%;flex:none;margin-top:14px}
 
+  /* ---- SÉLECTION MULTIPLE : cartes qui s'allument dans leur couleur ---- */
+  .multi{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;min-height:0;align-content:center}
+  .multi-card{border-radius:20px;padding:22px 14px;min-height:14.5vh;display:flex;align-items:center;justify-content:center;text-align:center;
+    background:#fff;border:2px solid var(--mc);color:var(--mc);position:relative;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,.08);
+    user-select:none;-webkit-user-select:none;
+    transition:transform .1s ease,background .16s ease,color .16s ease,box-shadow .16s ease}
+  .multi-card .mc-label{font-family:var(--display);font-weight:800;font-size:clamp(20px,5.6vw,26px);letter-spacing:-.01em}
+  .multi-card:active{transform:scale(.96)}
+  .multi-card[aria-pressed="true"]{background:var(--mc);color:#fff;border-color:var(--mc);box-shadow:0 14px 30px rgba(0,0,0,.22)}
+  .multi-card:focus-visible{outline:3px solid var(--mc);outline-offset:2px}
+
   /* =========================================================================
      ÉTAT RÉPONSE — flood plein écran, réponse ÉNORME
      ========================================================================= */
@@ -335,15 +363,9 @@
   .ans-fmk-band .afb-verdict .ic{font-size:24px}
   .ans-fmk-band .afb-target{font-family:var(--mono);font-weight:600;font-size:15px;text-align:right;line-height:1.2}
 
-  /* réponse spectrum : MÊME barre que la question, sur un panneau neutre —
-     l'écran prend la couleur choisie, mais le flood ne touche jamais la barre */
-  .spec-ans{padding-top:4px}
-  .spec-panel{width:100%;max-width:460px;flex:1;min-height:0;background:#e9ebf1;color:#241309;border-radius:26px;
-    padding:16px 10px 16px 14px;margin:6px 0 2px;box-shadow:0 16px 40px rgba(0,0,0,.24);display:flex}
-  .spec-panel .spec{flex:1;padding:0;gap:16px}
-  .spec-panel .spec-pole{min-width:0;gap:8px}
-  .spec-panel .sp-icon{font-size:24px}
-  .spec-panel .sp-label{font-size:14.5px;line-height:1.08;overflow-wrap:anywhere}
+  /* réponse sélection multiple : les choix, en pastilles colorées */
+  .ans-multi{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:460px}
+  .ans-pill{font-family:var(--display);font-weight:800;font-size:clamp(17px,4.8vw,23px);color:#fff;border-radius:14px;padding:9px 16px;box-shadow:0 6px 16px rgba(0,0,0,.18)}
 
   /* =========================================================================
      PROFIL FINAL
@@ -358,6 +380,8 @@
     scrollbar-width:none;}
   .profile::-webkit-scrollbar{display:none}
   #copyBtn{min-width:min(340px,82vw);box-shadow:0 8px 20px rgba(180,74,20,.2)}
+  .end-links{display:flex;align-items:center;justify-content:center;gap:4px}
+  .end-dot{color:var(--ink-dim)}
 
   /* =========================================================================
      RÉGLAGES
@@ -401,7 +425,7 @@
 
   <!-- ACCUEIL -->
   <section id="home" class="screen home" hidden>
-    <a class="to-menu tl" href="../" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5 L8 12 L15 19"/></svg></a>
+    <a class="to-menu tl" href="../" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H7"/><path d="M12.5 6.5 7 12l5.5 5.5"/></svg><span>Menu</span></a>
     <div class="home-hero">
       <div class="brand-icons" id="homeIcons" aria-hidden="true"></div>
       <h1 class="wordmark">Hot<br>Takes</h1>
@@ -444,16 +468,18 @@
     </div>
   </section>
 
-  <!-- PROFIL FINAL -->
+  <!-- PROFIL FINAL — un seul CTA (copier → Discord), deux petits liens dessous -->
   <section id="end" class="screen center end" hidden>
-    <a class="to-menu tr" href="../" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5 L8 12 L15 19"/></svg></a>
     <div class="brand-icons" id="endIcons" aria-hidden="true"></div>
     <h2 class="end-title">Tes hot takes.</h2>
-    <p class="fine">Colle-le dans le thread Discord.</p>
+    <p class="fine">Copie-le, colle-le dans le thread Discord.</p>
     <pre class="profile" id="profileBox"></pre>
     <button class="btn fire" id="copyBtn">Copier mon profil</button>
-    <a class="end-form" href="https://forms.cloud.microsoft/r/np4xP3HYBf" target="_blank" rel="noopener">⚡ Embarque dans un projet →</a>
-    <button class="link" id="againBtn">Recommencer</button>
+    <div class="end-links">
+      <a class="link" href="../">Menu principal</a>
+      <span class="end-dot" aria-hidden="true">·</span>
+      <button class="link" id="againBtn">Recommencer</button>
+    </div>
   </section>
 
   <!-- RÉGLAGES -->
@@ -529,21 +555,21 @@ const FMK = [
    Chaque format a sa mécanique ET son monde de couleur (cohérent question↔réponse).
    ============================================================================ */
 const QUESTIONS = [
-  // 1 — warm-up : archétype absurde, un tap, ça part
+  // 1 — this or that : archétype absurde, un tap, ça part
   {
-    id:"bouba-kiki", format:"split", hero:"This or that", plabel:"bouba / kiki", dark:true,
+    id:"bouba-kiki", format:"this-or-that", variant:"halves", hero:"This or that", plabel:"bouba / kiki", dark:true,
     options:[ { key:"bouba", label:"Bouba", color:"#7c3aed", icon:"bouba" }, { key:"kiki", label:"Kiki", color:"#ffb300", icon:"kiki" } ],
   },
-  // 2 — ancre humaine : le pourquoi EST la réponse
+  // 2 — texte : ancre humaine, le pourquoi EST la réponse (monde « feu »)
   {
     id:"pourquoi-ici", format:"text", hero:"Pourquoi es-tu ici ce soir?", plabel:"ici ce soir",
     bg:"linear-gradient(155deg,#ff8a1a,#ff2d55 90%)", dark:true, placeholder:"1 à 3 mots…",
   },
-  // 3 — recrutement (tôt = plus de monde voit le formulaire)
+  // 3 — pick : recrutement tôt = plus de monde voit le formulaire
   {
     id:"projet-interet", format:"pick", hero:"Pick your fighter", prompt:"Quel projet du CIA t'intéresse le plus?",
     plabel:"projet qui m'intéresse", bg:"var(--paper)", dark:false,
-    cta:{ label:"⚡ Embarque dans un projet →", url:"https://forms.cloud.microsoft/r/np4xP3HYBf" },
+    cta:{ label:"Embarque dans le projet →", url:"https://forms.cloud.microsoft/r/np4xP3HYBf" },
     options:[
       { key:"flapeeg",  label:"FlapEEG",           color:"#ff5a1f", desc:"jouer à Flappy Bird par la pensée (EEG)" },
       { key:"f1",       label:"F1 par tes muscles", color:"#e11d33", desc:"piloter une F1 par tes signaux musculaires" },
@@ -553,101 +579,95 @@ const QUESTIONS = [
       { key:"avion",    label:"Avion cargo",        color:"#00b3a4", desc:"atterrissage autonome par vision" },
     ],
   },
-  // 4 — tension true-AI vs LLM (le camp « vrai ML » vote surcoté)
+  // 4 — rate : hype LLM vs le camp « vrai ML »
   {
-    id:"rate-llm", format:"rate", hero:"Overrated / underrated", thing:"Les LLM (ChatGPT & co)",
-    plabel:"les LLM", bg:"linear-gradient(180deg,#1b1920,#141219)", dark:true,
+    id:"rate-llm", format:"rate", hero:"Overrated / underrated", thing:"Les LLMs",
+    plabel:"les LLMs", bg:"linear-gradient(180deg,#1b1920,#141219)", dark:true,
     options:[
       { key:"over", label:"Overrated",  grad:"linear-gradient(120deg,#ff3b3b,#ff7a1a 50%,#ffd23f)", ink:"#ffffff" },
       { key:"under",label:"Underrated", grad:"linear-gradient(120deg,#37d67a,#3a8dff 52%,#b06bff)", ink:"#ffffff" },
     ],
   },
-  // 5 — craft / fierté (déplacé en red-green flag)
+  // 5 — smash / pass : vibecoding (faut glisser, pas cliquer)
   {
-    id:"flag-ia-code", format:"flag", hero:"Red flag / green flag", prompt:"Laisser une IA coder ton projet au complet.",
-    plabel:"IA code tout le projet", bg:"#eceef2", dark:false,
-  },
-  // 6 — valeurs : pourquoi t'es VRAIMENT dans un club
-  {
-    id:"wyr-passion-utile", format:"wyr", hero:"Would you rather", prompt:"Travailler sur un projet…",
-    plabel:"passion vs utile", bg:"#ffffff", dark:true,
-    options:[
-      { key:"passion", label:"Qui me passionne", sub:"le fun, la curiosité",     color:"#ff2d7e" },
-      { key:"utile",   label:"Qui est utile",    sub:"ça sert à de quoi",         color:"#0f9b8e" },
-    ],
-  },
-  // 7 — tension true-AI : le débat « juste un outil »
-  {
-    id:"outil-binary", format:"binary", hero:"D'accord / Pas d'accord", prompt:"« L'IA, c'est juste un outil. »",
-    plabel:"« juste un outil »", bg:"#eceef2", dark:false,
-    options:[
-      { key:"ok",  label:"D'accord",     sub:"un outil, rien de plus", color:"#0f9b8e", ink:"#ffffff" },
-      { key:"non", label:"Pas d'accord", sub:"c'est plus que ça",      color:"#ff2d55", ink:"#ffffff" },
-    ],
-  },
-  // 8 — tier list (le format préféré de l'owner), contenu langages
-  {
-    id:"tier-langages", format:"tier", hero:"Tier list", prompt:"Classe les langages de programmation.",
-    plabel:"tier langages", bg:"linear-gradient(180deg,#241a2e,#171019)", dark:true,
-    items:[ { key:"py",label:"Python" },{ key:"js",label:"JavaScript" },{ key:"cpp",label:"C++" },{ key:"java",label:"Java" },{ key:"rust",label:"Rust" } ],
-  },
-  // 9 — appétit d'apprendre (vend le « 0 cours d'IA requis »)
-  {
-    id:"swipe-pogne-rien", format:"swipe", hero:"Smash or pass", prompt:"Rejoindre un projet où tu pognes rien au début.",
-    plabel:"projet où je pogne rien", icon:"spark", bg:"linear-gradient(180deg,#171a24,#0e0f15)", dark:true,
+    id:"vibecoding", format:"swipe", hero:"Smash or pass",
+    plabel:"vibecoding", cardBig:"VIBE\nCODING", cardSub:"Sans jamais regarder le code.",
+    bg:"linear-gradient(180deg,#171a24,#0e0f15)", dark:true,
     options:[ { key:"smash", label:"Smash", color:"#ff2d55" }, { key:"pass", label:"Pass", color:"#2f6bff" } ],
   },
-  // 10 — tribalisme de marque : 4 cibles, 3 verdicts, une reste de côté
+  // 6 — [MIS DE CÔTÉ] would you rather — retiré du jeu, code du format wyr conservé. Décommenter pour réactiver.
+  /*
+  {
+    id:"wyr-passion-utile", format:"wyr", hero:"Would you rather", plabel:"projet",
+    options:[
+      { key:"passion", label:"Travailler sur un projet qui me passionne", color:"#c8542f" },
+      { key:"utile",   label:"Travailler sur un projet qui est utile",    color:"#37557d" },
+    ],
+  },
+  */
+  // 7 — red / green flag : le débat « juste un outil »
+  {
+    id:"flag-outil", format:"flag", prompt:"« L'IA, c'est juste un outil. »",
+    plabel:"« juste un outil »", bg:"#eceef2", dark:false,
+  },
+  // 8 — tier list — FUSION : format tier (Q8) + contenu des 4 modèles (ex-Q10 Date/Marry/Kill). Couleurs de marque conservées.
+  // [MIS DE CÔTÉ] ancien contenu « concepts » : AI agents · Prompt engineering · AlphaGo · NVIDIA · Algos génétiques · Yann LeCun
+  {
+    id:"tier-modeles", format:"tier", hero:"Tier list", prompt:"Les modèles d'IA.",
+    plabel:"tier modèles", bg:"linear-gradient(180deg,#241a2e,#171019)", dark:true,
+    items:[ { key:"chatgpt",label:"ChatGPT",color:"#10a37f" },{ key:"claude",label:"Claude",color:"#d97757" },{ key:"grok",label:"Grok",color:"#20232a" },{ key:"deepseek",label:"DeepSeek",color:"#4d6bfe" } ],
+  },
+  // 9 — [FUSIONNÉ] Date/Marry/Kill retiré : son contenu (les 4 modèles) est passé au tier ci-dessus. Code du format fmk conservé.
+  /*
   {
     id:"fmk-chatbots", format:"fmk", hero:"Date · Marry · Kill", prompt:"Laisse-en un de côté.",
     plabel:"date / marry / kill", bg:"linear-gradient(180deg,#1e1830,#15101c)", dark:true,
-    targets:[ { key:"chatgpt",label:"ChatGPT" },{ key:"claude",label:"Claude" },{ key:"grok",label:"Grok" },{ key:"deepseek",label:"DeepSeek" } ],
+    targets:[ { key:"chatgpt",label:"ChatGPT",color:"#10a37f" },{ key:"claude",label:"Claude",color:"#d97757" },{ key:"grok",label:"Grok",color:"#20232a" },{ key:"deepseek",label:"DeepSeek",color:"#4d6bfe" } ],
   },
-  // 11 — attitude / usage réel (option « je l'évite » pour le camp true-AI)
+  */
+  // 10 — sélection multiple : usage réel de l'IA (les cartes s'allument)
   {
-    id:"usage-ia", format:"pick", hero:"Pick your fighter", prompt:"Comment tu utilises l'IA?",
-    plabel:"comment j'utilise l'IA", bg:"var(--paper)", dark:false,
+    id:"usage-multi", format:"multiselect", hero:"Comment tu utilises l'IA?", prompt:"Coche tout ce qui s'applique.",
+    plabel:"j'utilise l'IA pour", bg:"var(--paper)", dark:false,
     options:[
-      { key:"code",  label:"Pour coder",               color:"#3a6ff0", desc:"copilote, debug, tout ça" },
-      { key:"etude", label:"Pour étudier",             color:"#00b3a4", desc:"résumés, réviser, comprendre" },
-      { key:"tout",  label:"Pour tout, tout le temps", color:"#ff2d7e", desc:"j'peux pus m'en passer" },
-      { key:"evite", label:"Je l'évite",               color:"#8250c4", desc:"le vrai ML > les LLM" },
+      { key:"coder",     label:"Coder",       color:"#3a6ff0" },
+      { key:"apprendre", label:"Apprendre",   color:"#00b3a4" },
+      { key:"creer",     label:"Créer",       color:"#ff2d7e" },
+      { key:"communiquer",label:"Communiquer",color:"#ffb020" },
+      { key:"organiser", label:"M'organiser", color:"#7c5cff" },
+      { key:"reflechir", label:"Réfléchir",   color:"#ff5a1f" },
     ],
   },
-  // 12 — vision du monde (spectrum)
+  // 11 — texte silly : animal spirituel (moitié arrière, monde « violet » ≠ #2)
   {
-    id:"spectrum-monde", format:"spectrum", hero:"Place-toi", prompt:"Le monde dans 10 ans, à cause de l'IA :",
-    plabel:"le monde dans 10 ans", bg:"#e9ebf1", dark:false,
+    id:"animal", format:"text", hero:"Quel animal te représente?", plabel:"mon animal",
+    bg:"linear-gradient(155deg,#7c5cff,#e5468a 90%)", dark:true, placeholder:"celui qui te ressemble",
+  },
+  // 12 — spectrum : le monde dans 10 ans (teal ↔ pink, pas de brun)
+  {
+    id:"spectrum-monde", format:"spectrum", hero:"Spectrum", prompt:"Ton rapport à l'IA.",
+    plabel:"mon rapport à l'IA", bg:"#e9ebf1", dark:false,
     poles:[
-      { label:"En mieux", short:"en mieux", icon:"spark", color:"#12a85a" },
-      { label:"En pire",  short:"en pire",  icon:"skull", color:"#ff2d55" },
+      { label:"Techno-optimiste", short:"techno-optimiste", icon:"spark", color:"#00b3a4" },
+      { label:"Catastrophiste",   short:"catastrophiste",   icon:"skull", color:"#ff2d55" },
     ],
-    zones:[ "franchement mieux", "un peu mieux", "pas mal pareil", "un peu pire", "franchement pire" ],
+    zones:[ "techno-optimiste à fond", "plutôt confiant", "pile au centre", "plutôt inquiet", "catastrophiste fini" ],
   },
-  // 13 — avenir perso, personnel sous un costume d'industrie
+  // 13 — this or that (cartes) : ta job quand tu gradues — clôture perso
   {
-    id:"emploi-5ans", format:"binary", hero:"We're so back / it's so over", prompt:"Le marché de l'emploi en info dans 5 ans.",
-    plabel:"emploi dans 5 ans", bg:"#eceef2", dark:false,
+    id:"jobs-back-over", format:"this-or-that", variant:"cards", prompt:"Le marché de l'emploi.",
+    plabel:"l'emploi", bg:"#eceef2", dark:false,
     options:[
       { key:"back", label:"We're so back", sub:"on est tellement de retour", grad:"var(--gold)", ink:"#3a2600" },
       { key:"over", label:"It's so over",  sub:"c'est tellement fini",        color:"#0b0b0d", ink:"#f5c542" },
-    ],
-  },
-  // 14 — pur fun, sacrifiable si on manque de temps (donc en dernier)
-  {
-    id:"animal", format:"pick", hero:"Pick your fighter", prompt:"Quel est ton animal spirituel?",
-    plabel:"animal spirituel", bg:"var(--paper)", dark:false,
-    options:[
-      { key:"raton",    label:"Le raton poubelle",       color:"#7c5cff", desc:"chaos, 3h du mat, fouille les poubelles" },
-      { key:"ecureuil", label:"L'écureuil caféiné",      color:"#ff7a1a", desc:"12 onglets, zéro sommeil" },
-      { key:"ours",     label:"L'ours en hibernation",   color:"#0f9b8e", desc:"dodo d'abord, deadlines demain" },
-      { key:"pigeon",   label:"Le pigeon qui abandonne", color:"#e5468a", desc:"roucoule, a lâché prise" },
     ],
   },
 ];
 
 /* ================= ÉTAT ================= */
 const LS_KEY = "cia-hottakes-v4";
+/* ⬇️ À REMPLIR : lien du thread Discord où on colle son profil. Vide = « Copier » copie seulement. */
+const DISCORD_THREAD_URL = "";
 let state = { v:4, char:null, answers:{}, pos:0, started:false, screen:"home" };
 let editing = false;
 let specVal = 2;
@@ -728,7 +748,7 @@ function renderPlay(){
 
   if(!answered){
     nextBtn.hidden = true; editBtn.hidden = true;
-    applyTheme(q.format==="split" ? "" : q.bg, q.dark);
+    applyTheme((q.format==="this-or-that" && q.variant==="halves") ? "" : q.bg, q.dark);
     stage.className = "stage"; stage.innerHTML = askHTML(q); wireAsk(q);
   } else {
     const last = (state.pos === QUESTIONS.length-1);
@@ -746,7 +766,11 @@ function headHTML(q, small){ return `<div class="stage-head"><h2 class="hero${sm
 
 function askHTML(q){
   switch(q.format){
-    case "split": {
+    case "this-or-that": {
+      if(q.variant==="cards"){
+        return `<div class="stage-head"><p class="prompt" style="margin-top:0">${esc(q.prompt)}</p></div><div class="stack">` + q.options.map(o =>
+          `<button class="bigopt" data-key="${o.key}" style="background:${optBg(o)};color:${optInk(o)}"><span class="bo-label">${esc(o.label)}</span><span class="bo-sub">${esc(o.sub||"")}</span></button>`).join("") + `</div>`;
+      }
       const [a,b]=q.options;
       const half=o=>`<button class="half" data-key="${o.key}" style="background:${o.color};color:${inkFor(o.color)}"><span class="hstack">${o.icon?`<span class="hshape">${icon(o.icon)}</span>`:""}<span class="hlabel">${esc(o.label)}</span></span></button>`;
       return `<div class="split">${half(a)}${half(b)}</div>
@@ -761,11 +785,14 @@ function askHTML(q){
       return headHTML(q,true) + `<div class="fighters${q.options.length>4?' compact':''}">` + q.options.map(o =>
         `<button class="fighter" data-key="${o.key}" style="background:${o.color}">${o.icon?`<span class="fi-icon">${icon(o.icon)}</span>`:""}<span class="fi-name">${esc(o.label)}</span>${o.desc?`<span class="fi-desc">${esc(o.desc)}</span>`:""}</button>`).join("") + `</div>`;
     case "swipe": {
+      const scInner = q.cardBig
+        ? `<div class="sc-big">${esc(q.cardBig).replace(/\n/g,"<br>")}</div>` + (q.cardSub?`<div class="sc-sub">${esc(q.cardSub)}</div>`:"")
+        : `<div class="sc-icon">${icon(q.icon)}</div><div class="sc-text">${esc(q.prompt)}</div>`;
       return headHTML(q,true) + `<div class="swipe-wrap">
           <div class="swipe-guide"><span class="pass">‹ Pass</span><span class="smash">Smash ›</span></div>
           <div class="swipe-card" id="swipeCard">
             <div class="swipe-stamp smash" id="stampSmash">SMASH</div><div class="swipe-stamp pass" id="stampPass">PASS</div>
-            <div class="sc-icon">${icon(q.icon)}</div><div class="sc-text">${esc(q.prompt)}</div>
+            ${scInner}
           </div>
           <div class="swipe-tip">glisse la carte ←→</div>
         </div>`;
@@ -780,16 +807,18 @@ function askHTML(q){
         q.options.map(o => `<button class="rate-btn" data-key="${o.key}" style="background:${optBg(o)};color:${optInk(o)}"><span class="rb-label">${esc(o.label)}</span></button>`).join("") + `</div>`;
     case "wyr": {
       const [a,b]=q.options;
-      return `<div class="split vert diag" id="wyrSplit">
-          <button class="half top" data-key="${a.key}" style="background:${a.color};color:#fff"><span class="hstack"><span class="hlabel">${esc(a.label)}</span><span class="hsub">${esc(a.sub||"")}</span></span></button>
-          <button class="half bot" data-key="${b.key}" style="background:${b.color};color:#fff"><span class="hstack"><span class="hlabel">${esc(b.label)}</span><span class="hsub">${esc(b.sub||"")}</span></span></button>
+      return `<div class="split vert diag wyr" id="wyrSplit" style="--seam:50%">
+          <button class="half top" data-key="${a.key}" style="background:${a.color};color:#fff"><span class="hstack"><span class="hlabel">${esc(a.label)}</span></span></button>
+          <button class="half bot" data-key="${b.key}" style="background:${b.color};color:#fff"><span class="hstack"><span class="hlabel">${esc(b.label)}</span></span></button>
         </div>
         <div class="wyr-title">${esc(q.hero)}</div>
-        <div class="wyr-vs">VS</div>`;
+        <div class="wyr-vs">VS</div>
+        <div class="wyr-cue">glisse ↑ ou ↓</div>`;
     }
-    case "binary":
-      return `<div class="stage-head"><p class="prompt" style="margin-top:0">${esc(q.prompt)}</p></div><div class="stack">` + q.options.map(o =>
-        `<button class="bigopt" data-key="${o.key}" style="background:${optBg(o)};color:${optInk(o)}"><span class="bo-label">${esc(o.label)}</span><span class="bo-sub">${esc(o.sub||"")}</span></button>`).join("") + `</div>`;
+    case "multiselect":
+      return headHTML(q,true) + `<div class="multi" id="multiGrid">` + q.options.map(o =>
+        `<button class="multi-card" data-key="${o.key}" style="--mc:${o.color}"><span class="mc-label">${esc(o.label)}</span></button>`).join("") +
+        `</div><button class="btn ghost deposit" id="multiDeposit" disabled style="border-color:var(--sink)">Déposer →</button>`;
     case "tier":
       return headHTML(q,true) + `<div class="tiers" id="tierRows">` +
         TIERS.map(t=>`<div class="tier-row"><div class="tier-key" style="background:${t.color}">${t.key}</div><div class="tier-drop" data-zone="${t.key}"></div></div>`).join("") +
@@ -797,7 +826,7 @@ function askHTML(q){
          <button class="btn ghost deposit" id="tierDeposit" disabled style="border-color:var(--sink)">Déposer →</button>`;
     case "fmk":
       return headHTML(q,true) + `<div class="fmk-zones" id="fmkZones">` +
-        FMK.map(v=>`<div class="fmk-zone" data-zone="${v.key}" style="background:${v.color}"><div class="fz-label"><span class="ic">${icon(v.icon)}</span>${v.label}</div><div class="fz-slot" data-slot="${v.key}"></div></div>`).join("") +
+        FMK.map(v=>`<div class="fmk-zone" data-zone="${v.key}" style="background:rgba(255,255,255,.06)"><div class="fz-label"><span class="ic">${icon(v.icon)}</span>${v.label}</div><div class="fz-slot" data-slot="${v.key}"></div></div>`).join("") +
         `</div><div class="fmk-tray" data-zone="__tray" id="fmkTray"></div>
          <button class="btn ghost deposit" id="fmkDeposit" disabled style="border-color:var(--sink)">Déposer →</button>`;
     case "spectrum": {
@@ -824,7 +853,8 @@ function commit(id,value){ state.answers[id]=value; editing=false; vibrate(); sa
 
 function wireAsk(q){
   switch(q.format){
-    case "split": {
+    case "this-or-that": {
+      if(q.variant==="cards"){ stage.querySelectorAll("[data-key]").forEach(b=>b.onclick=()=>commit(q.id,b.dataset.key)); return; }
       const halves=[...stage.querySelectorAll(".half")];
       halves.forEach(h=>h.onclick=()=>{
         const key=h.dataset.key, other=halves.find(x=>x!==h);
@@ -834,8 +864,9 @@ function wireAsk(q){
       return;
     }
     case "wyr": wireWyr(q); return;
-    case "pick": case "flag": case "rate": case "binary":
+    case "pick": case "flag": case "rate":
       stage.querySelectorAll("[data-key]").forEach(b=>b.onclick=()=>commit(q.id,b.dataset.key)); return;
+    case "multiselect": wireMultiselect(q); return;
     case "text": {
       const inp=stage.querySelector("#answerText"), dep=stage.querySelector("#textDeposit");
       const upd=()=>dep.disabled=(inp.value.trim()==="");
@@ -869,29 +900,33 @@ function wireSwipe(q){
   card.addEventListener("pointerup",end); card.addEventListener("pointercancel",end);
 }
 
-/* would you rather : glisser vers le haut = option du haut, vers le bas = option du bas (tap marche aussi) */
+/* would you rather : GLISSER seulement (pas de tap) — vers le haut = option du haut,
+   vers le bas = option du bas. La fente reste fixe, la moitié visée s'illumine. */
 function wireWyr(q){
   const split=stage.querySelector("#wyrSplit");
   const [topH,botH]=[...split.querySelectorAll(".half")];
   const aKey=q.options[0].key, bKey=q.options[1].key;
-  let sx=0, sy=0, dy=0, moved=false, dragging=false;
-  const setSeam=v=>split.style.setProperty("--seam", v+"%");
-  split.addEventListener("pointerdown",e=>{ dragging=true; moved=false; sx=e.clientX; sy=e.clientY; dy=0; split.setPointerCapture(e.pointerId); });
-  split.addEventListener("pointermove",e=>{ if(!dragging) return; dy=e.clientY-sy; if(Math.hypot(e.clientX-sx,dy)>7) moved=true;
-    const H=split.getBoundingClientRect().height||1; const seam=Math.max(18,Math.min(82, 50 + dy/H*70)); setSeam(seam);
-    topH.classList.toggle("lit",seam>58); botH.classList.toggle("lit",seam<42); });
-  const end=e=>{ if(!dragging) return; dragging=false;
-    const H=split.getBoundingClientRect().height||1; const seam=50 + dy/H*70;
-    if(moved){
-      if(seam>64) return commit(q.id,aKey);
-      if(seam<36) return commit(q.id,bKey);
-      setSeam(50); topH.classList.remove("lit"); botH.classList.remove("lit");
-    } else {
-      const el=document.elementFromPoint(e.clientX,e.clientY), half=el&&el.closest(".half");
-      if(half) commit(q.id,half.dataset.key);
-    }
-  };
+  let sy=0, dy=0, dragging=false;
+  split.addEventListener("pointerdown",e=>{ dragging=true; sy=e.clientY; dy=0; split.setPointerCapture(e.pointerId); });
+  split.addEventListener("pointermove",e=>{ if(!dragging) return; dy=e.clientY-sy;
+    topH.classList.toggle("lit", dy<-16); botH.classList.toggle("lit", dy>16); });
+  const end=()=>{ if(!dragging) return; dragging=false;
+    const H=split.getBoundingClientRect().height||1; const frac=dy/H;
+    if(frac<-0.14) return commit(q.id,aKey);
+    if(frac> 0.14) return commit(q.id,bKey);
+    topH.classList.remove("lit"); botH.classList.remove("lit"); };
   split.addEventListener("pointerup",end); split.addEventListener("pointercancel",end);
+}
+
+/* sélection multiple : coche autant de cartes que tu veux, chacune s'allume dans sa couleur */
+function wireMultiselect(q){
+  const cards=[...stage.querySelectorAll(".multi-card")];
+  const dep=stage.querySelector("#multiDeposit");
+  const sel=new Set(Array.isArray(state.answers[q.id])?state.answers[q.id]:[]);
+  const paint=()=>{ cards.forEach(c=>c.setAttribute("aria-pressed", sel.has(c.dataset.key)?"true":"false")); dep.disabled=sel.size===0; };
+  cards.forEach(c=>c.onclick=()=>{ const k=c.dataset.key; sel.has(k)?sel.delete(k):sel.add(k); vibrate(8); paint(); });
+  dep.onclick=()=>{ if(sel.size) commit(q.id,[...sel]); };
+  paint();
 }
 
 function wireSpectrum(q){
@@ -921,7 +956,14 @@ function wireBoard(q,kind){
   function render(){
     stage.querySelectorAll(".tier-drop,.fz-slot,#tierTray,#fmkTray").forEach(el=>el.innerHTML="");
     items.forEach(it=>{ const chip=document.createElement("button"); chip.className="tchip"+(selected===it.key?" sel":""); chip.dataset.chip=it.key; chip.textContent=it.label;
-      chip.setAttribute("aria-pressed", selected===it.key?"true":"false"); zoneNode(place[it.key]).appendChild(chip); });
+      chip.setAttribute("aria-pressed", selected===it.key?"true":"false");
+      if(it.color){ const inTray=place[it.key]==="__tray";
+        if(kind==="fmk"){ chip.style.background = inTray ? it.color : "#fff"; chip.style.color = inTray ? inkFor(it.color) : it.color; }
+        else { chip.style.background = it.color; chip.style.color = inkFor(it.color); } }
+      zoneNode(place[it.key]).appendChild(chip); });
+    /* fmk : la case Date/Marry/Kill prend la couleur du modèle qu'on y dépose */
+    if(kind==="fmk"){ FMK.forEach(v=>{ const z=stage.querySelector(`.fmk-zone[data-zone="${v.key}"]`); if(!z) return;
+      const placed=items.find(it=>place[it.key]===v.key); z.style.background = placed ? placed.color : "rgba(255,255,255,.06)"; }); }
     wireChips();
     depBtn.disabled = items.filter(it=>place[it.key]!=="__tray").length !== need;
   }
@@ -965,21 +1007,29 @@ function floodOpt(o){
 function renderAnswer(q,ans){
   stage.className="stage";
   switch(q.format){
-    case "split": case "pick": {
+    case "this-or-that": {
+      const o=q.options.find(x=>x.key===ans);
+      if(q.variant==="cards"){ floodOpt(o);
+        stage.innerHTML=`<div class="ans"><p class="a-prompt">${esc(q.prompt)}</p><div class="a-big">${esc(o.label)}</div>${o.sub?`<div class="a-sub">${esc(o.sub)}</div>`:""}</div>`; return; }
+      applyTheme(o.color, !isLight(o.color));
+      stage.innerHTML=`<div class="ans">`+ansHead(q)+`${o.icon?`<div class="a-icon">${icon(o.icon)}</div>`:""}<div class="a-big">${esc(o.label)}</div></div>`; return;
+    }
+    case "pick": {
       const o=q.options.find(x=>x.key===ans); applyTheme(o.color, !isLight(o.color));
-      stage.innerHTML=`<div class="ans">`+ansHead(q)+`${o.icon?`<div class="a-icon">${icon(o.icon)}</div>`:""}<div class="a-big">${esc(o.label)}</div>${o.desc?`<div class="a-sub">${esc(o.desc)}</div>`:""}</div>`; return;
+      stage.innerHTML=`<div class="ans"><div class="a-big">${esc(o.label)}</div>${o.desc?`<div class="a-sub">${esc(o.desc)}</div>`:""}</div>`; return;
     }
     case "wyr": {
       const o=q.options.find(x=>x.key===ans); applyTheme(o.color, !isLight(o.color));
-      stage.innerHTML=`<div class="ans">`+ansHead(q)+`<div class="a-big">${esc(o.label)}</div>${o.sub?`<div class="a-sub">${esc(o.sub)}</div>`:""}</div>`; return;
+      stage.innerHTML=`<div class="ans"><p class="a-eyebrow">${esc(q.hero)}</p><div class="a-big txt">${esc(o.label)}</div></div>`; return;
     }
     case "swipe": {
       const o=q.options.find(x=>x.key===ans); applyTheme(o.color, !isLight(o.color));
       stage.innerHTML=`<div class="ans"><p class="a-prompt">${esc(q.prompt)}</p><div class="a-big">${esc(o.label)}</div></div>`; return;
     }
-    case "binary": {
-      const o=q.options.find(x=>x.key===ans); floodOpt(o);
-      stage.innerHTML=`<div class="ans"><p class="a-prompt">${esc(q.prompt)}</p><div class="a-big">${esc(o.label)}</div>${o.sub?`<div class="a-sub">${esc(o.sub)}</div>`:""}</div>`; return;
+    case "multiselect": {
+      applyTheme(q.bg, q.dark);
+      const pills=(ans||[]).map(k=>{ const o=q.options.find(x=>x.key===k); return `<span class="ans-pill" style="background:${o.color}">${esc(o.label)}</span>`; }).join("");
+      stage.innerHTML=`<div class="ans"><p class="a-eyebrow">${esc(q.hero)}</p><div class="ans-multi">${pills}</div></div>`; return;
     }
     case "rate": {
       const o=q.options.find(x=>x.key===ans); floodOpt(o);
@@ -994,20 +1044,12 @@ function renderAnswer(q,ans){
       stage.innerHTML=`<div class="ans">`+ansHead(q)+`<div class="a-big txt">${esc(ans)}</div></div>`; return;
     }
     case "spectrum": {
-      const [p0,p1]=q.poles; const n=q.zones.length; const pct=specPos(ans,n);
-      applyTheme(mixHex(p0.color,p1.color,n>1?ans/(n-1):.5), true);
-      stage.innerHTML=`<div class="ans spec-ans"><p class="a-eyebrow">${esc(q.hero)}</p>
-        <div class="spec-panel"><div class="spec">
-          <div class="spec-bar" style="background:linear-gradient(180deg,${p0.color},${p1.color})">
-            ${q.zones.map((_,i)=>`<div class="spec-dot" style="top:${specPos(i,n)}%"></div>`).join("")}
-            <div class="spec-thumb" style="top:${pct}%"></div>
-          </div>
-          <div class="spec-side">
-            <div class="spec-pole"><span class="sp-icon" style="color:${p0.color}">${icon(p0.icon)}</span><span class="sp-label">${esc(p0.label)}</span></div>
-            <div class="spec-live"><small>ta position</small>${esc(q.zones[ans])}</div>
-            <div class="spec-pole"><span class="sp-icon" style="color:${p1.color}">${icon(p1.icon)}</span><span class="sp-label">${esc(p1.label)}</span></div>
-          </div>
-        </div></div></div>`; return;
+      /* la couleur choisie REMPLIT l'écran; pas de barre, pas de brun, juste la zone en gros */
+      const [p0,p1]=q.poles; const n=q.zones.length; const t=n>1?ans/(n-1):.5;
+      const A=hexToRgb(p0.color),B=hexToRgb(p1.color); const cc=A.map((x,i)=>Math.round(x+(B[i]-x)*t));
+      const flood=`rgb(${cc[0]},${cc[1]},${cc[2]})`; const L=0.299*cc[0]+0.587*cc[1]+0.114*cc[2];
+      applyTheme(flood, L<=150);
+      stage.innerHTML=`<div class="ans"><p class="a-eyebrow">${esc(q.hero)}</p><p class="a-prompt">${esc(q.prompt)}</p><div class="a-big">${esc(q.zones[ans])}</div></div>`; return;
     }
     case "tier": {
       applyTheme(q.bg, q.dark);
@@ -1018,7 +1060,7 @@ function renderAnswer(q,ans){
     case "fmk": {
       applyTheme(q.bg, q.dark);
       const bands=FMK.map(v=>{ const itemKey=Object.keys(ans).find(k=>ans[k]===v.key); const it=q.targets.find(x=>x.key===itemKey);
-        return `<div class="ans-fmk-band" style="background:${v.color}"><span class="afb-verdict"><span class="ic">${icon(v.icon)}</span>${v.label}</span><span class="afb-target">${it?esc(it.label):"—"}</span></div>`; }).join("");
+        return `<div class="ans-fmk-band" style="background:${it?it.color:"rgba(255,255,255,.10)"}"><span class="afb-verdict"><span class="ic">${icon(v.icon)}</span>${v.label}</span><span class="afb-target">${it?esc(it.label):"—"}</span></div>`; }).join("");
       const leftKey=Object.keys(ans).find(k=>ans[k]==="__tray"); const leftIt=q.targets.find(x=>x.key===leftKey);
       const leftHTML=leftIt?`<p class="a-sub" style="margin-top:8px">Non classé : <strong>${esc(leftIt.label)}</strong></p>`:"";
       stage.innerHTML=`<div class="ans"><p class="a-eyebrow">${esc(q.hero)}</p><div class="ans-fmk">${bands}</div>${leftHTML}</div>`; return;
@@ -1029,7 +1071,8 @@ function renderAnswer(q,ans){
 /* ================= PROFIL ================= */
 function pval(q,ans){
   switch(q.format){
-    case "split": case "pick": case "wyr": case "binary": return q.options.find(o=>o.key===ans).label;
+    case "this-or-that": case "pick": case "wyr": return q.options.find(o=>o.key===ans).label;
+    case "multiselect": return (ans||[]).map(k=>q.options.find(o=>o.key===k).label).join(", ");
     case "swipe": return q.options.find(o=>o.key===ans).label.toLowerCase();
     case "flag": return ans==="red" ? "red flag" : "green flag";
     case "rate": return q.options.find(o=>o.key===ans).label.toLowerCase();
@@ -1051,26 +1094,10 @@ async function copyProfile(){
   const txt=profileText(); let ok=false;
   try{ await navigator.clipboard.writeText(txt); ok=true; }
   catch(e){ try{ const ta=document.createElement("textarea"); ta.value=txt; ta.style.position="fixed"; ta.style.top="-1000px"; ta.style.opacity="0"; document.body.appendChild(ta); ta.focus(); ta.select(); ok=document.execCommand("copy"); document.body.removeChild(ta); }catch(e2){ ok=false; } }
-  vibrate(); const btn=document.getElementById("copyBtn"); btn.textContent=ok?"Copié! ✓":"Sélectionne pis copie ↑"; if(ok) burstConfetti(); setTimeout(()=>{ btn.textContent="Copier mon profil"; },1900);
-}
-/* petite explosion de confettis aux couleurs du feu quand on copie le profil */
-function burstConfetti(){
-  if(matchMedia("(prefers-reduced-motion:reduce)").matches) return;
-  const c=document.createElement("canvas"); c.setAttribute("aria-hidden","true");
-  c.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60";
-  const dpr=Math.min(2,window.devicePixelRatio||1); c.width=innerWidth*dpr; c.height=innerHeight*dpr;
-  document.body.appendChild(c); const x=c.getContext("2d"); x.scale(dpr,dpr);
-  const cols=["#ffc42e","#ff7a1a","#ff2d55","#ff2d7e","#37d67a","#3a8dff","#b06bff"], parts=[];
-  for(let i=0;i<130;i++) parts.push({ x:innerWidth/2+(Math.random()-.5)*60, y:innerHeight*.42,
-    vx:(Math.random()-.5)*13, vy:Math.random()*-15-4, g:.4+Math.random()*.22,
-    s:6+Math.random()*7, r:Math.random()*6.28, vr:(Math.random()-.5)*.45, col:cols[i%cols.length], a:1 });
-  let t=0;
-  (function frame(){ t++; x.clearRect(0,0,innerWidth,innerHeight); let alive=false;
-    for(const p of parts){ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; if(t>44) p.a-=.02;
-      if(p.a>0 && p.y<innerHeight+24){ alive=true; x.save(); x.globalAlpha=Math.max(0,p.a); x.translate(p.x,p.y); x.rotate(p.r);
-        x.fillStyle=p.col; x.fillRect(-p.s/2,-p.s/2,p.s,p.s*.62); x.restore(); } }
-    if(alive) requestAnimationFrame(frame); else c.remove();
-  })();
+  vibrate(); const btn=document.getElementById("copyBtn"); btn.textContent=ok?"Copié! ✓":"Sélectionne pis copie ↑";
+  /* copier → aller coller dans le thread Discord (quand le lien sera fourni) */
+  if(ok && DISCORD_THREAD_URL){ setTimeout(()=>{ location.href=DISCORD_THREAD_URL; }, 550); }
+  setTimeout(()=>{ btn.textContent="Copier mon profil"; },1900);
 }
 
 /* ================= RÉGLAGES ================= */

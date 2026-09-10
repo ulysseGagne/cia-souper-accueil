@@ -69,29 +69,34 @@
 
   .back{
     position:absolute;z-index:5;
-    top:max(12px,env(safe-area-inset-top));
+    top:max(13px,env(safe-area-inset-top));
     left:max(12px,env(safe-area-inset-left));
-    width:38px;height:38px;padding:0;border:none;border-radius:50%;
+    width:42px;height:42px;padding:0;border:none;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
-    background:rgba(6,8,13,.40);color:#fff;cursor:pointer;
-    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
-    transition:transform .09s ease;
+    background:rgba(255,255,255,.15);color:#fff;cursor:pointer;
+    -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+    box-shadow:0 3px 16px rgba(0,0,0,.34);
+    transition:transform .09s ease, background .15s ease;
   }
+  .back:hover{background:rgba(255,255,255,.26)}
   .back:active{transform:scale(.93)}
   .back:focus-visible{outline:3px solid #fff;outline-offset:2px}
-  /* --- Retour au menu maitre (app Trois jeux) --- */
-  .to-menu{position:fixed;z-index:60;top:max(12px,env(safe-area-inset-top));
-    width:40px;height:40px;padding:0;border:none;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;text-decoration:none;
-    background:rgba(10,12,20,.42);color:#fff;cursor:pointer;
-    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  .back svg{width:21px;height:21px;display:block}
+  /* --- Retour au menu maître (app Trois jeux) --- */
+  /* Accueil : pastille « ← Menu » — lisible, un vrai corps de flèche, PAS un cercle noir */
+  .to-menu{position:fixed;z-index:60;top:max(13px,env(safe-area-inset-top));
+    display:inline-flex;align-items:center;gap:6px;padding:8px 14px 8px 10px;
+    border:none;border-radius:999px;text-decoration:none;cursor:pointer;
+    font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:#fff;background:rgba(255,255,255,.14);
+    -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+    box-shadow:0 3px 16px rgba(0,0,0,.4);
     transition:transform .09s ease, background .15s ease}
   .to-menu.tl{left:max(12px,env(safe-area-inset-left))}
-  .to-menu.tr{right:max(12px,env(safe-area-inset-right))}
-  .to-menu:hover{background:rgba(10,12,20,.62)}
-  .to-menu:active{transform:scale(.92)}
+  .to-menu:hover{background:rgba(255,255,255,.24)}
+  .to-menu:active{transform:scale(.93)}
   .to-menu:focus-visible{outline:3px solid #fff;outline-offset:2px}
-  .to-menu svg{width:20px;height:20px;display:block}
+  .to-menu svg{width:21px;height:21px;display:block;flex:none}
 
   /* ---------- PICKER ---------- */
   .grid{
@@ -140,7 +145,7 @@
 
 <!-- ACCUEIL — la ligne -->
 <section class="home" id="home">
-    <a class="to-menu tl" href="../" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5 L8 12 L15 19"/></svg></a>
+    <a class="to-menu tl" href="../" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H7"/><path d="M12.5 6.5 7 12l5.5 5.5"/></svg><span>Menu</span></a>
   <div class="scene">
     <svg viewBox="0 0 248 230" aria-hidden="true" focusable="false">
       <defs>
@@ -209,9 +214,9 @@
 
 <div class="app" id="app" hidden>
   <button class="back" id="backBtn" type="button" aria-label="Retour à l'accueil">
-    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none"
-         stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M15 5 L8 12 L15 19"/>
+    <svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true" fill="none"
+         stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 12H7"/><path d="M12.5 6.5 7 12l5.5 5.5"/>
     </svg>
   </button>
   <div class="grid" id="grid"></div>
