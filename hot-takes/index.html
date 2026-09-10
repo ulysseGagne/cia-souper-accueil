@@ -245,8 +245,11 @@
   .swipe-card:active{cursor:grabbing}
   .swipe-card .sc-icon{font-size:66px;line-height:1;color:var(--ink)}
   .swipe-card .sc-text{font-family:var(--display);font-weight:800;font-size:clamp(22px,6vw,28px);letter-spacing:-.01em;line-height:1.1}
-  .swipe-card .sc-big{font-family:var(--display);font-weight:800;font-size:clamp(48px,16vw,86px);line-height:.9;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink)}
-  .swipe-card .sc-sub{font-family:var(--mono);font-weight:600;font-size:13px;letter-spacing:.02em;color:var(--ink-2);margin-top:16px;max-width:20ch}
+  .swipe-card .sc-svg{width:100%;height:auto;display:block}
+  .swipe-card .sc-svg text{font-family:var(--display);font-weight:800;fill:var(--ink)}
+  .swipe-card .sc-svg .scv-1{font-size:76px}
+  .swipe-card .sc-svg .scv-2{font-size:46px}
+  .swipe-card .sc-svg .scv-3{font-size:17px;font-weight:600;fill:var(--ink-2)}
   .swipe-stamp{position:absolute;top:22px;font-family:var(--display);font-weight:800;font-size:34px;letter-spacing:.02em;
     padding:6px 16px;border:4px solid;border-radius:12px;opacity:0;pointer-events:none}
   .swipe-stamp.smash{right:20px;color:#ff2d55;border-color:#ff2d55;transform:rotate(16deg)}
@@ -591,7 +594,7 @@ const QUESTIONS = [
   // 5 — smash / pass : vibecoding (faut glisser, pas cliquer)
   {
     id:"vibecoding", format:"swipe", hero:"Smash or pass",
-    plabel:"vibecoding", cardBig:"VIBE\nCODING", cardSub:"Sans jamais regarder le code.",
+    plabel:"vibecoding", cardBig:"VIBE\nCODING", cardSub:"Sans regarder le code",
     bg:"linear-gradient(180deg,#171a24,#0e0f15)", dark:true,
     options:[ { key:"smash", label:"Smash", color:"#ff2d55" }, { key:"pass", label:"Pass", color:"#2f6bff" } ],
   },
@@ -610,22 +613,21 @@ const QUESTIONS = [
     id:"flag-outil", format:"flag", prompt:"« L'IA, c'est juste un outil. »",
     plabel:"« juste un outil »", bg:"#eceef2", dark:false,
   },
-  // 8 — tier list — FUSION : format tier (Q8) + contenu des 4 modèles (ex-Q10 Date/Marry/Kill). Couleurs de marque conservées.
+  // 7 — tier list — FUSION : format tier + contenu « usage de l'IA » (l'ex multi-sélection). Couleurs conservées.
   // [MIS DE CÔTÉ] ancien contenu « concepts » : AI agents · Prompt engineering · AlphaGo · NVIDIA · Algos génétiques · Yann LeCun
   {
-    id:"tier-modeles", format:"tier", hero:"Tier list", prompt:"Les modèles d'IA.",
-    plabel:"tier modèles", bg:"linear-gradient(180deg,#241a2e,#171019)", dark:true,
-    items:[ { key:"chatgpt",label:"ChatGPT",color:"#10a37f" },{ key:"claude",label:"Claude",color:"#d97757" },{ key:"grok",label:"Grok",color:"#20232a" },{ key:"deepseek",label:"DeepSeek",color:"#4d6bfe" } ],
+    id:"tier-usage", format:"tier", hero:"Tier list", prompt:"Tes usages de l'IA.",
+    plabel:"tier usages", bg:"linear-gradient(180deg,#241a2e,#171019)", dark:true,
+    items:[ { key:"coder",label:"Coder",color:"#3a6ff0" },{ key:"apprendre",label:"Apprendre",color:"#00b3a4" },{ key:"creer",label:"Créer",color:"#ff2d7e" },{ key:"communiquer",label:"Communiquer",color:"#ffb020" },{ key:"organiser",label:"M'organiser",color:"#7c5cff" },{ key:"reflechir",label:"Réfléchir",color:"#ff5a1f" } ],
   },
-  // 9 — [FUSIONNÉ] Date/Marry/Kill retiré : son contenu (les 4 modèles) est passé au tier ci-dessus. Code du format fmk conservé.
-  /*
+  // 8 — date / marry / kill : 4 modèles, couleurs de marque (le placement colore la case) — GARDÉE telle quelle
   {
     id:"fmk-chatbots", format:"fmk", hero:"Date · Marry · Kill", prompt:"Laisse-en un de côté.",
     plabel:"date / marry / kill", bg:"linear-gradient(180deg,#1e1830,#15101c)", dark:true,
     targets:[ { key:"chatgpt",label:"ChatGPT",color:"#10a37f" },{ key:"claude",label:"Claude",color:"#d97757" },{ key:"grok",label:"Grok",color:"#20232a" },{ key:"deepseek",label:"DeepSeek",color:"#4d6bfe" } ],
   },
-  */
-  // 10 — sélection multiple : usage réel de l'IA (les cartes s'allument)
+  // 9 — [FUSIONNÉ] « Comment tu utilises l'IA? » : son contenu est devenu le tier list ci-dessus. Code multiselect conservé.
+  /*
   {
     id:"usage-multi", format:"multiselect", hero:"Comment tu utilises l'IA?", prompt:"Coche tout ce qui s'applique.",
     plabel:"j'utilise l'IA pour", bg:"var(--paper)", dark:false,
@@ -638,10 +640,11 @@ const QUESTIONS = [
       { key:"reflechir", label:"Réfléchir",   color:"#ff5a1f" },
     ],
   },
+  */
   // 11 — texte silly : animal spirituel (moitié arrière, monde « violet » ≠ #2)
   {
-    id:"animal", format:"text", hero:"Quel animal te représente?", plabel:"mon animal",
-    bg:"linear-gradient(155deg,#7c5cff,#e5468a 90%)", dark:true, placeholder:"celui qui te ressemble",
+    id:"animal", format:"text", hero:"Ton animal spirituel?", plabel:"animal spirituel",
+    bg:"linear-gradient(155deg,#7c5cff,#e5468a 90%)", dark:true, placeholder:"Ton animal...",
   },
   // 12 — spectrum : le monde dans 10 ans (teal ↔ pink, pas de brun)
   {
@@ -785,9 +788,17 @@ function askHTML(q){
       return headHTML(q,true) + `<div class="fighters${q.options.length>4?' compact':''}">` + q.options.map(o =>
         `<button class="fighter" data-key="${o.key}" style="background:${o.color}">${o.icon?`<span class="fi-icon">${icon(o.icon)}</span>`:""}<span class="fi-name">${esc(o.label)}</span>${o.desc?`<span class="fi-desc">${esc(o.desc)}</span>`:""}</button>`).join("") + `</div>`;
     case "swipe": {
-      const scInner = q.cardBig
-        ? `<div class="sc-big">${esc(q.cardBig).replace(/\n/g,"<br>")}</div>` + (q.cardSub?`<div class="sc-sub">${esc(q.cardSub)}</div>`:"")
-        : `<div class="sc-icon">${icon(q.icon)}</div><div class="sc-text">${esc(q.prompt)}</div>`;
+      let scInner;
+      if(q.cardBig){
+        const L=q.cardBig.split("\n"), W=300, TL=280, X=150;
+        scInner = `<svg class="sc-svg" viewBox="0 0 ${W} 184" preserveAspectRatio="xMidYMid meet" aria-hidden="true">`
+          + `<text x="${X}" y="72" text-anchor="middle" textLength="${TL}" lengthAdjust="spacingAndGlyphs" class="scv-1">${esc(L[0]||"")}</text>`
+          + `<text x="${X}" y="126" text-anchor="middle" textLength="${TL}" lengthAdjust="spacingAndGlyphs" class="scv-2">${esc(L[1]||"")}</text>`
+          + (q.cardSub ? `<text x="${X}" y="164" text-anchor="middle" textLength="${TL}" lengthAdjust="spacingAndGlyphs" class="scv-3">${esc(q.cardSub)}</text>` : "")
+          + `</svg>`;
+      } else {
+        scInner = `<div class="sc-icon">${icon(q.icon)}</div><div class="sc-text">${esc(q.prompt)}</div>`;
+      }
       return headHTML(q,true) + `<div class="swipe-wrap">
           <div class="swipe-guide"><span class="pass">‹ Pass</span><span class="smash">Smash ›</span></div>
           <div class="swipe-card" id="swipeCard">
