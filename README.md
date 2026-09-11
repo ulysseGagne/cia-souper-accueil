@@ -21,7 +21,7 @@ Chaque jeu présente une facette du Club :
 - **16h00** — Montage : test AV (projecteur + micro + son + l'app sur l'ordi du projecteur), tape A/B/C/D sur chaque siège, nametags, assignation des rôles admin.
 - **16h40** — Photo de l'équipe admin.
 - **16h55** — Accueil (nametags, placement, on va vers les personnes seules).
-- **17h15** — Diapo **« Présentation du club »** : Cyrille — bienvenue, remerciements, mission.
+- **17h15** — Diapo **« Présentation du club »** : Cyrille — bienvenue, remerciements, mission, **consentement photo**.
 - **17h30** — Ulysse embarque, diapo **« Trois jeux… »** (le QR!) : déroulement de la soirée, puis explique **Bluff** → on joue.
 - **18h15** — Fin de Bluff, **poutine servie**.
 - **18h30** — Diapo **« Rencontres »** : Cyrille — partenaires, responsable (Isabeau Prémont-Schwarz), équipe. Ulysse explique **Coupable!** → on joue.
@@ -44,7 +44,7 @@ Chaque jeu présente une facette du Club :
 
 - Tables de **4 à 7 personnes** (requis pour Bluff)
 - Fil Discord prêt pour les profils Hot Takes
-- Consentement photo dans le mot d'ouverture
+- **Musique** de la soirée à déterminer
 - Nombre final de participants + nb de poutines donné à la cuisine
 
 ---
