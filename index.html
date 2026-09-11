@@ -188,6 +188,11 @@ body.present .present-flag{display:inline-flex}
   padding:clamp(22px,3vw,48px)}
 .deck-qr{width:min(72vmin,560px);height:auto;background:#fff;padding:clamp(16px,2.6vw,26px);border-radius:20px;
   box-shadow:0 20px 50px rgba(20,18,16,.18)}
+/* Inscriptions : deux codes QR côte à côte (empilés si l'écran est étroit) */
+.qr-row{display:flex;flex-wrap:wrap;gap:clamp(24px,5vw,72px);align-items:flex-start;justify-content:center}
+.qr-col{display:flex;flex-direction:column;align-items:center;gap:clamp(12px,1.8vw,20px)}
+.qr-col .deck-eyebrow{font-size:clamp(14px,2.6vw,20px)}
+.qr-row .deck-qr{width:min(38vmin,340px)}
 .deck-cap{margin:0;font-family:var(--mono);font-weight:500;font-size:clamp(12px,2.2vw,15px);letter-spacing:.06em;color:var(--ink-2)}
 .deck-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:82;
   width:clamp(46px,7vw,64px);height:clamp(46px,7vw,64px);border-radius:50%;border:1.6px solid var(--trait);
@@ -354,10 +359,20 @@ body.present .present-flag{display:inline-flex}
     ],
     poutine: [
       '<h2 class="deck-title">Prochaine activité</h2>'+
-      '<p class="deck-sub">Spikeball vendredi le 18 à 17 h.</p>',
-      '<h2 class="deck-title">Formations AWS</h2>'+
-      '<p class="deck-sub">Remplissez le sondage.</p>'+
-      '<img class="deck-qr" src="assets/qr-aws.svg" alt="Code QR — inscription aux formations AWS">'
+      '<p class="deck-sub">Spikeball vendredi le 18 à 17 h.</p>'+
+      '<p class="deck-sub">Vendredi prochain, 12 h, au VCH-3870 : première journée DEV, pizza gratuite.</p>',
+      '<h2 class="deck-title">Inscriptions</h2>'+
+      '<div class="qr-row">'+
+        '<div class="qr-col">'+
+          '<p class="deck-eyebrow">Formations AWS</p>'+
+          '<img class="deck-qr" src="assets/qr-aws.svg" alt="Code QR — inscription aux formations AWS">'+
+        '</div>'+
+        '<div class="qr-col">'+
+          '<p class="deck-eyebrow">Inscription Projets</p>'+
+          '<img class="deck-qr" src="assets/qr-projets.svg" alt="Code QR — inscription aux projets">'+
+        '</div>'+
+      '</div>'+
+      '<p class="deck-cap">Scannez pour vous inscrire.</p>'
     ]
   };
   var deck = document.getElementById("deck"), stage = document.getElementById("deckStage"),

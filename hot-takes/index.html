@@ -418,6 +418,9 @@
     background:#fff;color:#141210;border:1.6px solid rgba(20,18,16,.16)}
   .seat.hl{background:#141210;color:#f7f5f1;border-color:#141210;box-shadow:0 6px 16px rgba(20,18,16,.2)}
   .move-continue{background:#141210;color:#f7f5f1;width:min(340px,82vw);box-shadow:0 12px 30px rgba(20,18,16,.18)}
+  /* retour discret sous « Continuer » — noir basse opacité, accordé au fond crème du move */
+  .move .move-back{color:rgba(20,18,16,.5);margin-top:-10px}
+  .move .move-back:focus-visible{outline:2px solid #141210}
 
   /* =========================================================================
      RÉGLAGES
@@ -524,6 +527,7 @@
     <div class="move-instruction" id="moveText"></div>
     <div class="seatgrid" id="seatGrid" aria-hidden="true"></div>
     <button class="btn move-continue" id="moveContinue">Continuer →</button>
+    <button class="link move-back" id="moveBack">← Retour</button>
   </section>
 
   <!-- RÉGLAGES -->
@@ -765,6 +769,7 @@ function showTransition(gapIndex){
   show("move");
 }
 document.getElementById("moveContinue").onclick=()=>{ state.pos++; editing=false; renderPlay(); show("play"); };
+document.getElementById("moveBack").onclick=()=>{ editing=false; renderPlay(); show("play"); };
 
 /* ================= CRÉATION ================= */
 function renderCreate(){
