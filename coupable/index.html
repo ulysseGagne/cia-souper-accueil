@@ -46,8 +46,14 @@
       #07080c;
     overflow:hidden;
   }
-  .scene{position:relative;flex:0 0 auto;width:100%}
+  .scene{position:relative;flex:0 0 auto;width:100%;display:flex;justify-content:center}
   .scene svg{width:100%;height:auto;display:block}
+  /* Laptop / écran large (paysage) : sans borne, la file (ratio 248:230) déborde en hauteur et
+     les têtes sont coupées. On la borne par la hauteur du viewport. Le portrait (téléphone) n'est
+     jamais touché → mode normal intact. */
+  @media (orientation:landscape){
+    .scene svg{max-width:min(100%, calc(54dvh * 248 / 230))}
+  }
 
   .home-copy{
     position:relative;z-index:2;flex:0 0 auto;

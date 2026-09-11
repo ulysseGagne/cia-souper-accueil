@@ -139,15 +139,15 @@ img{max-width:100%}
 .to-menu:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .to-menu svg{width:20px;height:20px;display:block;flex:none}
 
-/* phrases cliquables — seulement en mode présentation */
-.sous .pz{transition:color .15s ease,text-decoration-color .15s ease}
-body.present .sous .pz{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;
-  text-underline-offset:5px;text-decoration-thickness:2px;text-decoration-color:var(--trait)}
-body.present .sous .pz:hover{color:var(--ink);text-decoration-color:var(--ink)}
+/* phrases cliquables — seulement en mode présentation (pas de soulignement : le survol change la couleur, c'est assez) */
+.sous .pz{transition:color .15s ease}
+body.present .sous .pz{cursor:pointer}
+body.present .sous .pz:hover{color:var(--ink)}
 
 /* indicateur discret que le mode est actif */
 .present-flag{position:fixed;z-index:65;top:max(15px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);
-  display:none;align-items:center;gap:7px;padding:6px 13px;border-radius:999px;background:var(--ink);color:var(--paper);
+  display:none;align-items:center;gap:7px;padding:6px 13px;border-radius:999px;
+  background:#fff;color:var(--ink);border:1.6px solid var(--trait);box-shadow:0 4px 14px rgba(20,18,16,.12);
   font-family:var(--mono);font-weight:600;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase}
 .present-flag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--alarme)}
 body.present .present-flag{display:inline-flex}
@@ -183,7 +183,10 @@ body.present .present-flag{display:inline-flex}
   font-size:clamp(21px,4.4vw,38px);line-height:1.28;max-width:22ch;text-wrap:balance}
 .deck-logo{width:clamp(150px,24vw,290px);height:auto;filter:drop-shadow(0 12px 30px rgba(20,18,16,.16))}
 .deck-img{max-width:min(100%,940px);max-height:58dvh;width:auto;border-radius:18px;box-shadow:0 20px 50px rgba(20,18,16,.22)}
-.deck-qr{width:min(60vmin,440px);height:auto;background:#fff;padding:clamp(14px,2.4vw,22px);border-radius:20px;
+/* Partenaires : logos posés sur un passe-partout blanc — beaucoup plus gros, et de l'air autour */
+.deck-img.matte{max-width:min(100%,1500px);max-height:66dvh;background:#fff;
+  padding:clamp(22px,3vw,48px)}
+.deck-qr{width:min(72vmin,560px);height:auto;background:#fff;padding:clamp(16px,2.6vw,26px);border-radius:20px;
   box-shadow:0 20px 50px rgba(20,18,16,.18)}
 .deck-cap{margin:0;font-family:var(--mono);font-weight:500;font-size:clamp(12px,2.2vw,15px);letter-spacing:.06em;color:var(--ink-2)}
 .deck-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:82;
@@ -342,9 +345,10 @@ body.present .present-flag{display:inline-flex}
     ],
     rencontres: [
       '<h2 class="deck-title">Nos partenaires</h2>'+
-      '<img class="deck-img" src="assets/cia-partenaires.webp" alt="Nos partenaires">',
-      '<h2 class="deck-title">Notre responsable</h2>'+
-      '<p class="deck-sub">Isabeau Prémont-Schwartz</p>',
+      '<img class="deck-img matte" src="assets/cia-partenaires.webp" alt="Nos partenaires">',
+      '<p class="deck-eyebrow">Notre responsable</p>'+
+      '<h2 class="deck-title">Isabeau Prémont-Schwarz</h2>'+
+      '<p class="deck-sub">Professeure adjointe en intelligence artificielle, spécialiste de l’apprentissage par renforcement.</p>',
       '<h2 class="deck-title">Notre équipe</h2>'+
       '<img class="deck-img" src="assets/cia-team.webp" alt="Notre équipe">'
     ],
@@ -352,6 +356,7 @@ body.present .present-flag{display:inline-flex}
       '<h2 class="deck-title">Prochaine activité</h2>'+
       '<p class="deck-sub">Spikeball vendredi le 18 à 17 h.</p>',
       '<h2 class="deck-title">Formations AWS</h2>'+
+      '<p class="deck-sub">Remplissez le sondage.</p>'+
       '<img class="deck-qr" src="assets/qr-aws.svg" alt="Code QR — inscription aux formations AWS">'
     ]
   };

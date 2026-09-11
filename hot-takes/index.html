@@ -184,17 +184,15 @@
   .split .half .hsub{font-family:var(--mono);font-weight:600;font-size:12.5px;letter-spacing:.04em;opacity:.9;margin-top:8px;max-width:22ch}
   .split .half:active{filter:brightness(1.06)}
   .split .half:focus-visible{outline:4px solid #fff;outline-offset:-12px}
-  /* badge central du FORMAT — solide, gros, bicolore */
+  /* pastille du FORMAT « This or that » — solide, gros, bicolore; le sous-titre (l'amorce) vit À L'INTÉRIEUR de la pastille blanche */
   .split-badge{position:absolute;z-index:2;left:50%;transform:translateX(-50%);
-    top:calc(max(12px,env(safe-area-inset-top)) + 60px);
-    background:#fff;border-radius:999px;padding:11px 20px;box-shadow:0 8px 24px rgba(0,0,0,.22);
-    font-family:var(--display);font-weight:800;font-size:clamp(19px,5.6vw,26px);letter-spacing:-.01em;white-space:nowrap;text-transform:uppercase}
-  /* sous-titre du format « This or that » — pastille sombre lisible sur les deux moitiés */
-  .split-sub{position:absolute;z-index:2;left:50%;transform:translateX(-50%);
-    top:calc(max(12px,env(safe-area-inset-top)) + 116px);
-    background:rgba(0,0,0,.24);color:#fff;border-radius:999px;padding:6px 15px;
-    font-family:var(--mono);font-weight:600;font-size:12.5px;letter-spacing:.02em;
-    white-space:nowrap;pointer-events:none;text-align:center}
+    top:calc(max(12px,env(safe-area-inset-top)) + 54px);
+    display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;
+    background:#fff;border-radius:22px;padding:12px 22px;box-shadow:0 8px 24px rgba(0,0,0,.22)}
+  .split-badge .sb-main{font-family:var(--display);font-weight:800;font-size:clamp(22px,6.4vw,30px);
+    letter-spacing:-.01em;line-height:1;white-space:nowrap;text-transform:uppercase}
+  .split-badge .sb-sub{font-family:var(--mono);font-weight:600;font-size:clamp(11.5px,3.3vw,13.5px);
+    letter-spacing:.02em;line-height:1.2;color:var(--ink-2)}
   .split.vert .hlabel{font-size:clamp(30px,8.5vw,46px)}
   .hstack{display:flex;flex-direction:column;align-items:center;text-align:center}
   .wyr-title{position:absolute;z-index:2;left:50%;transform:translateX(-50%);
@@ -403,18 +401,20 @@
   /* =========================================================================
      TRANSITION — déplacement entre deux hot takes
      ========================================================================= */
-  .move{background:var(--fire);color:#fff;gap:20px}
-  .move .eyebrow{color:rgba(255,255,255,.85)}
-  .move-instruction{font-family:var(--display);font-weight:800;letter-spacing:-.02em;line-height:1.05;
-    font-size:clamp(29px,8vw,48px);text-wrap:balance;max-width:15ch;text-shadow:0 4px 18px rgba(120,20,0,.28)}
+  /* « On change de place » : langage visuel de l'accueil de l'app maîtresse
+     (papier crème + encre foncée + mono), et non l'accueil « feu » de Hot Takes. */
+  .move{background:#f7f5f1;color:#141210;gap:22px}
+  .move .eyebrow{color:#5c564c}
+  .move-instruction{font-family:var(--display);font-weight:800;letter-spacing:-.025em;line-height:1.04;
+    font-size:clamp(30px,8.5vw,52px);text-wrap:balance;max-width:15ch;color:#141210}
   .seatgrid{display:flex;flex-direction:column;gap:8px;margin:4px 0}
   .seatgrid .seatrow{display:flex;gap:8px;justify-content:center}
   .seat{width:clamp(34px,10vw,46px);height:clamp(34px,10vw,46px);border-radius:12px;
     display:flex;align-items:center;justify-content:center;
     font-family:var(--display);font-weight:800;font-size:clamp(16px,4.6vw,22px);
-    background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.30)}
-  .seat.hl{background:#fff;color:var(--accent);border-color:#fff;box-shadow:0 6px 16px rgba(120,20,0,.30)}
-  .move-continue{background:#fff;color:var(--accent);width:min(340px,82vw);box-shadow:0 12px 30px rgba(120,20,0,.24)}
+    background:#fff;color:#141210;border:1.6px solid rgba(20,18,16,.16)}
+  .seat.hl{background:#141210;color:#f7f5f1;border-color:#141210;box-shadow:0 6px 16px rgba(20,18,16,.2)}
+  .move-continue{background:#141210;color:#f7f5f1;width:min(340px,82vw);box-shadow:0 12px 30px rgba(20,18,16,.18)}
 
   /* =========================================================================
      RÉGLAGES
@@ -839,8 +839,7 @@ function askHTML(q){
       const [a,b]=q.options;
       const half=o=>`<button class="half" data-key="${o.key}" style="background:${o.color};color:${inkFor(o.color)}"><span class="hstack">${o.icon?`<span class="hshape">${icon(o.icon)}</span>`:""}<span class="hlabel">${esc(o.label)}</span></span></button>`;
       return `<div class="split">${half(a)}${half(b)}</div>
-        <div class="split-badge"><span style="color:${a.color}">This</span> <span style="color:#241309">or</span> <span style="color:${b.color}">that</span></div>`
-        + (q.sub?`<div class="split-sub">${esc(q.sub)}</div>`:"");
+        <div class="split-badge"><span class="sb-main"><span style="color:${a.color}">This</span> <span style="color:#241309">or</span> <span style="color:${b.color}">that</span></span>${q.sub?`<span class="sb-sub">${esc(q.sub)}</span>`:""}</div>`;
     }
     case "text":
       return headHTML(q) + `<div class="text-stage">
