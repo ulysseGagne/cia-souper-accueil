@@ -24,7 +24,7 @@ Chaque jeu présente une facette du Club :
 - **17h15** — Diapo **« Présentation du club »** : Cyrille — bienvenue, remerciements, mission.
 - **17h30** — Ulysse embarque, diapo **« Trois jeux… »** (le QR!) : déroulement de la soirée, puis explique **Bluff** → on joue.
 - **18h15** — Fin de Bluff, **poutine servie**.
-- **18h30** — Diapo **« Rencontres »** : Cyrille — partenaires, responsable (Isabeau Prémont-Schwartz), équipe. Ulysse explique **Coupable!** → on joue.
+- **18h30** — Diapo **« Rencontres »** : Cyrille — partenaires, responsable (Isabeau Prémont-Schwarz), équipe. Ulysse explique **Coupable!** → on joue.
 - **19h00** — Fin de Coupable!, Ulysse explique **Hot Takes** → on joue (rotations entre les tables).
 - **20h00** — Diapo **« Poutine gratuite »** : prochaines activités + formulaire **AWS** (QR à l'écran).
 - **20h15** — Fin du temps structuré. · **21h15** — départ. · **21h30** — salle vide et propre.
