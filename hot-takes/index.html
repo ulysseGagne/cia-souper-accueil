@@ -1172,8 +1172,13 @@ async function copyProfile(){
   try{ await navigator.clipboard.writeText(txt); ok=true; }
   catch(e){ try{ const ta=document.createElement("textarea"); ta.value=txt; ta.style.position="fixed"; ta.style.top="-1000px"; ta.style.opacity="0"; document.body.appendChild(ta); ta.focus(); ta.select(); ok=document.execCommand("copy"); document.body.removeChild(ta); }catch(e2){ ok=false; } }
   vibrate(); const btn=document.getElementById("copyBtn"); btn.textContent=ok?"Copié! ✓":"Sélectionne pis copie ↑";
-  /* copier → aller coller dans le thread Discord (quand le lien sera fourni) */
-  if(ok && DISCORD_THREAD_URL){ setTimeout(()=>{ location.href=DISCORD_THREAD_URL; }, 550); }
+  /* copié → ouvrir le fil Discord dans un NOUVEL onglet (sur mobile : ouvre l'app Discord).
+     Appel synchrone après la copie pour garder l'activation utilisateur; filet même-onglet si bloqué. */
+  if(ok && DISCORD_THREAD_URL){
+    const w = window.open(DISCORD_THREAD_URL, "_blank");
+    if(w){ try{ w.opener = null; }catch(e){} }
+    else { location.href = DISCORD_THREAD_URL; }
+  }
   setTimeout(()=>{ btn.textContent="Copier mon profil"; },1900);
 }
 

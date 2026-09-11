@@ -355,6 +355,7 @@
     <p class="eyebrow">Mise en place</p>
     <h2 class="q">Combien de joueurs à ta table?</h2>
     <div class="choices" id="nChoices">
+      <button class="chip" data-n="4" aria-pressed="false">4</button>
       <button class="chip" data-n="5" aria-pressed="false">5</button>
       <button class="chip" data-n="6" aria-pressed="false">6</button>
       <button class="chip" data-n="7" aria-pressed="false">7</button>
@@ -585,8 +586,9 @@ function load(){
      garanti HONNÊTE au moins une fois par fenêtre de N+1 tours (donc tout le monde touche
      aux trois rôles), sans jamais coïncider avec l'IGNORANT, et sans repère simple à
      déduire (ce n'est pas « l'IGNORANT + un décalage fixe »). Vérifié à la main pour
-     N = 5, 6, 7 : toute fenêtre de N+1 tours consécutifs contient les N joueurs. */
+     N = 4, 5, 6, 7 : toute fenêtre de N+1 tours consécutifs contient les N joueurs. */
 const HONNETE_SEQ = {
+  4: [3,1,2,1,4,3,1,2,4],
   5: [3,5,4,1,2,5,3,4,2],
   6: [3,5,1,6,2,4,5,3,1],
   7: [4,6,1,7,3,2,5,6,4],
@@ -865,7 +867,7 @@ document.getElementById("resetBtn").addEventListener("click", hardReset);
 const sheet = document.getElementById("sheet");
 function openSheet(){
   const setN = document.getElementById("setN"); setN.innerHTML = "";
-  [5,6,7].forEach(n=>{
+  [4,5,6,7].forEach(n=>{
     const b = document.createElement("button");
     b.className = "mini"; b.textContent = n; b.setAttribute("aria-pressed", state.N===n ? "true":"false");
     b.addEventListener("click", ()=>{
