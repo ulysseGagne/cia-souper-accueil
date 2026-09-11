@@ -23,6 +23,7 @@ html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--disp);
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 img{max-width:100%}
+[hidden]{display:none!important}
 
 /* ---------- mise en page ---------- */
 .wrap{min-height:100dvh;display:flex;flex-direction:column;max-width:1180px;margin:0 auto;
@@ -123,6 +124,84 @@ img{max-width:100%}
   .foot .r1,.foot .r2{flex-direction:column;gap:2px;text-align:center;align-items:center}
   .foot .r2{margin-top:6px}
 }
+
+/* ================= MODE PRÉSENTATION (projecteur) ================= */
+/* pastille ← MENU — reprend le style mono de l'affiche */
+.to-menu{position:fixed;z-index:70;top:max(16px,env(safe-area-inset-top));left:max(14px,env(safe-area-inset-left));
+  display:inline-flex;align-items:center;gap:7px;padding:9px 15px 9px 12px;
+  border:1.6px solid var(--trait);border-radius:999px;background:rgba(247,245,241,.86);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  color:var(--ink);text-decoration:none;cursor:pointer;
+  font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  transition:transform .09s ease, background .15s ease}
+.to-menu:hover{background:#fff}
+.to-menu:active{transform:scale(.94)}
+.to-menu:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.to-menu svg{width:20px;height:20px;display:block;flex:none}
+
+/* phrases cliquables — seulement en mode présentation */
+.sous .pz{transition:color .15s ease,text-decoration-color .15s ease}
+body.present .sous .pz{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;
+  text-underline-offset:5px;text-decoration-thickness:2px;text-decoration-color:var(--trait)}
+body.present .sous .pz:hover{color:var(--ink);text-decoration-color:var(--ink)}
+
+/* indicateur discret que le mode est actif */
+.present-flag{position:fixed;z-index:65;top:max(15px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);
+  display:none;align-items:center;gap:7px;padding:6px 13px;border-radius:999px;background:var(--ink);color:var(--paper);
+  font-family:var(--mono);font-weight:600;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase}
+.present-flag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--alarme)}
+body.present .present-flag{display:inline-flex}
+
+/* overlay mot de passe */
+.pwd{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:rgba(20,18,16,.42);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.pwd-card{width:100%;max-width:340px;background:var(--paper);border:1.6px solid var(--trait);border-radius:20px;
+  padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 24px 60px rgba(20,18,16,.28);
+  animation:pwdrise .2s cubic-bezier(.2,.9,.3,1)}
+@keyframes pwdrise{from{transform:translateY(12px);opacity:.4}to{transform:none;opacity:1}}
+.pwd-label{margin:0;font-family:var(--mono);font-weight:600;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-2)}
+.pwd-input{width:100%;padding:14px 16px;border:1.6px solid var(--trait);border-radius:12px;background:#fff;
+  font-family:var(--mono);font-size:16px;color:var(--ink)}
+.pwd-input:focus{outline:3px solid var(--ink);outline-offset:1px}
+.pwd .btn-go{border:none;border-radius:12px;padding:14px 18px;background:var(--ink);color:var(--paper);cursor:pointer;
+  font-family:var(--disp);font-weight:800;font-size:17px;letter-spacing:-.01em;transition:transform .09s ease}
+.pwd .btn-go:active{transform:scale(.97)}
+.pwd-hint{margin:0;font-family:var(--mono);font-size:12px;color:var(--alarme)}
+.pwd-card.shake{animation:shake .32s}
+@keyframes shake{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(4px)}50%{transform:translateX(-6px)}}
+
+/* deck de diapos plein écran */
+.deck{position:fixed;inset:0;z-index:80;
+  background:radial-gradient(120% 70% at 50% -6%, #fffdf9, transparent 60%), var(--paper)}
+.deck-stage{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;gap:clamp(16px,3vw,26px);padding:clamp(76px,11vh,120px) clamp(56px,10vw,120px) clamp(58px,9vh,92px)}
+.deck-eyebrow{margin:0;font-family:var(--mono);font-weight:600;font-size:clamp(12px,2.4vw,15px);
+  letter-spacing:.24em;text-transform:uppercase;color:var(--ink-2)}
+.deck-title{margin:0;font-family:var(--disp);font-weight:800;letter-spacing:-.03em;line-height:.98;
+  font-size:clamp(38px,8vw,86px);text-wrap:balance;max-width:18ch}
+.deck-sub{margin:0;font-family:var(--disp);font-weight:600;letter-spacing:-.012em;color:var(--ink-2);
+  font-size:clamp(21px,4.4vw,38px);line-height:1.28;max-width:22ch;text-wrap:balance}
+.deck-logo{width:clamp(150px,24vw,290px);height:auto;filter:drop-shadow(0 12px 30px rgba(20,18,16,.16))}
+.deck-img{max-width:min(100%,940px);max-height:58dvh;width:auto;border-radius:18px;box-shadow:0 20px 50px rgba(20,18,16,.22)}
+.deck-qr{width:min(60vmin,440px);height:auto;background:#fff;padding:clamp(14px,2.4vw,22px);border-radius:20px;
+  box-shadow:0 20px 50px rgba(20,18,16,.18)}
+.deck-cap{margin:0;font-family:var(--mono);font-weight:500;font-size:clamp(12px,2.2vw,15px);letter-spacing:.06em;color:var(--ink-2)}
+.deck-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:82;
+  width:clamp(46px,7vw,64px);height:clamp(46px,7vw,64px);border-radius:50%;border:1.6px solid var(--trait);
+  background:rgba(255,255,255,.7);color:var(--ink);cursor:pointer;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  font-size:clamp(26px,4vw,34px);line-height:1;display:flex;align-items:center;justify-content:center;
+  transition:transform .09s ease, background .15s ease}
+.deck-nav:hover{background:#fff}
+.deck-nav:active{transform:translateY(-50%) scale(.92)}
+.deck-nav:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.deck-nav[disabled]{opacity:0;pointer-events:none}
+.deck-nav.prev{left:max(12px,env(safe-area-inset-left))}
+.deck-nav.next{right:max(12px,env(safe-area-inset-right))}
+.deck-dots{position:absolute;bottom:max(20px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:82;display:flex;gap:9px}
+.deck-dots i{width:8px;height:8px;border-radius:50%;background:var(--trait);transition:background .15s ease,transform .15s ease}
+.deck-dots i.on{background:var(--ink);transform:scale(1.25)}
+@media (prefers-reduced-motion:reduce){.pwd-card,.deck-nav{animation:none}}
 </style>
 </head>
 <body>
@@ -132,13 +211,13 @@ img{max-width:100%}
 
   <div class="tete">
     <h1 class="titre">Trois jeux.<br>Une poutine.</h1>
-    <p class="sous">Présentation du club. Rencontres. Poutine gratuite. Trois jeux créés sur mesure pour la soirée.</p>
+    <p class="sous"><span class="pz" data-deck="club">Présentation du club.</span> <span class="pz" data-deck="rencontres">Rencontres.</span> <span class="pz" data-deck="poutine">Poutine gratuite.</span> <span class="pz" data-deck="jeux">Trois jeux créés sur mesure pour la soirée.</span></p>
   </div>
 
   <div class="rang">
 
     <!-- Hot Takes -->
-    <a class="poste" href="./hot-takes/" aria-label="Jouer à Hot Takes">
+    <a class="poste" href="./hot-takes/index.html" aria-label="Jouer à Hot Takes">
       <span class="tel t-ht">
         <span class="bt bt-a"></span><span class="bt bt-v1"></span><span class="bt bt-v2"></span><span class="bt bt-p"></span>
         <span class="ecr">
@@ -151,7 +230,7 @@ img{max-width:100%}
     </a>
 
     <!-- Coupable! -->
-    <a class="poste" href="./coupable/" aria-label="Jouer à Coupable!">
+    <a class="poste" href="./coupable/index.html" aria-label="Jouer à Coupable!">
       <span class="tel t-cp">
         <span class="bt bt-a"></span><span class="bt bt-v1"></span><span class="bt bt-v2"></span><span class="bt bt-p"></span>
         <span class="ecr">
@@ -175,7 +254,7 @@ img{max-width:100%}
     </a>
 
     <!-- The Bluff Game -->
-    <a class="poste" href="./bluff/" aria-label="Jouer à The Bluff Game">
+    <a class="poste" href="./bluff/index.html" aria-label="Jouer à The Bluff Game">
       <span class="tel t-bl">
         <span class="bt bt-a"></span><span class="bt bt-v1"></span><span class="bt bt-v2"></span><span class="bt bt-p"></span>
         <span class="ecr">
@@ -195,5 +274,124 @@ img{max-width:100%}
   </div>
 
 </div>
+
+<!-- indicateur + overlays du mode présentation -->
+<div class="present-flag" aria-hidden="true">Présentation</div>
+
+<div class="pwd" id="pwd" hidden>
+  <form class="pwd-card" id="pwdForm">
+    <p class="pwd-label">Mode présentation</p>
+    <input class="pwd-input" id="pwdInput" type="password" autocomplete="off" placeholder="mot de passe" aria-label="Mot de passe">
+    <button class="btn-go" type="submit">Entrer</button>
+    <p class="pwd-hint" id="pwdHint" hidden>Mot de passe incorrect.</p>
+  </form>
+</div>
+
+<div class="deck" id="deck" hidden>
+  <a class="to-menu" id="deckMenu" href="#" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H7"/><path d="M12.5 6.5 7 12l5.5 5.5"/></svg><span>Menu</span></a>
+  <div class="deck-stage" id="deckStage"></div>
+  <button class="deck-nav prev" id="deckPrev" aria-label="Diapositive précédente">‹</button>
+  <button class="deck-nav next" id="deckNext" aria-label="Diapositive suivante">›</button>
+  <div class="deck-dots" id="deckDots"></div>
+</div>
+
+<!-- Mode présentation : triple-clic sur le PIED → mot de passe (« cia ») → décks projecteur.
+     Le drapeau est local à l'appareil (localStorage) : n'affecte jamais les téléphones des joueurs. -->
+<script>
+(function(){
+  var PKEY = "cia-present";
+  var body = document.body;
+  function isPresent(){ try{ return localStorage.getItem(PKEY)==="1"; }catch(e){ return false; } }
+  function apply(){ body.classList.toggle("present", isPresent()); }
+  function setPresent(on){ try{ on ? localStorage.setItem(PKEY,"1") : localStorage.removeItem(PKEY); }catch(e){} apply(); }
+
+  /* --- déclencheur : triple-clic sur le pied --- */
+  var foot = document.querySelector(".foot");
+  var pwd = document.getElementById("pwd"), pwdForm = document.getElementById("pwdForm");
+  var pwdInput = document.getElementById("pwdInput"), pwdHint = document.getElementById("pwdHint");
+  var pwdCard = pwd.querySelector(".pwd-card");
+  var n = 0, timer = null;
+  if(foot){
+    foot.style.webkitTapHighlightColor = "transparent";
+    foot.addEventListener("click", function(){
+      n++; clearTimeout(timer);
+      if(n >= 3){ n = 0; if(isPresent()) setPresent(false); else openPwd(); return; }
+      timer = setTimeout(function(){ n = 0; }, 600);
+    });
+  }
+  function openPwd(){ pwdHint.hidden = true; pwdInput.value = ""; pwd.hidden = false; setTimeout(function(){ pwdInput.focus(); }, 30); }
+  function closePwd(){ pwd.hidden = true; }
+  pwd.addEventListener("click", function(e){ if(e.target === pwd) closePwd(); });
+  pwdForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    if(pwdInput.value.trim().toLowerCase() === "cia"){ closePwd(); setPresent(true); }
+    else { pwdHint.hidden = false; pwdCard.classList.remove("shake"); void pwdCard.offsetWidth; pwdCard.classList.add("shake"); pwdInput.select(); }
+  });
+
+  /* --- décks projecteur --- */
+  var DECKS = {
+    club: [
+      '<img class="deck-logo" src="assets/cia-logo.webp" alt="Logo du CIA">'+
+      '<h2 class="deck-title">Club d’IA de l’Université Laval</h2>',
+      '<h2 class="deck-title">Mission du club</h2>'+
+      '<p class="deck-sub">Démocratiser l’intelligence artificielle par l’incubation de projets étudiants.</p>'
+    ],
+    jeux: [
+      '<img class="deck-qr" src="qr.svg" alt="Code QR vers l’application">'+
+      '<p class="deck-cap">Scannez pour jouer sur votre téléphone.</p>'
+    ],
+    rencontres: [
+      '<h2 class="deck-title">Nos partenaires</h2>'+
+      '<img class="deck-img" src="assets/cia-partenaires.webp" alt="Nos partenaires">',
+      '<h2 class="deck-title">Notre responsable</h2>'+
+      '<p class="deck-sub">Isabeau Prémont-Schwartz</p>',
+      '<h2 class="deck-title">Notre équipe</h2>'+
+      '<img class="deck-img" src="assets/cia-team.webp" alt="Notre équipe">'
+    ],
+    poutine: [
+      '<h2 class="deck-title">Prochaine activité</h2>'+
+      '<p class="deck-sub">Spikeball vendredi le 18 à 17 h.</p>',
+      '<h2 class="deck-title">Formations AWS</h2>'+
+      '<img class="deck-qr" src="assets/qr-aws.svg" alt="Code QR — inscription aux formations AWS">'
+    ]
+  };
+  var deck = document.getElementById("deck"), stage = document.getElementById("deckStage"),
+      dots = document.getElementById("deckDots"), prev = document.getElementById("deckPrev"), next = document.getElementById("deckNext");
+  var curDeck = null, idx = 0;
+  function openDeck(id){ if(!DECKS[id]) return; curDeck = id; idx = 0; deck.hidden = false; render(); }
+  function closeDeck(){ deck.hidden = true; curDeck = null; }
+  function render(){
+    var slides = DECKS[curDeck]; if(!slides) return;
+    idx = Math.max(0, Math.min(idx, slides.length - 1));
+    stage.innerHTML = slides[idx];
+    prev.disabled = (idx === 0); next.disabled = (idx === slides.length - 1);
+    dots.innerHTML = ""; slides.forEach(function(_, i){ var d = document.createElement("i"); if(i === idx) d.className = "on"; dots.appendChild(d); });
+  }
+  function go(delta){ if(!curDeck) return; var s = DECKS[curDeck]; idx = Math.max(0, Math.min(idx + delta, s.length - 1)); render(); }
+  prev.addEventListener("click", function(){ go(-1); });
+  next.addEventListener("click", function(){ go(1); });
+  document.getElementById("deckMenu").addEventListener("click", function(e){ e.preventDefault(); closeDeck(); });
+
+  /* phrases → décks (uniquement en mode présentation) */
+  var sous = document.querySelector(".sous");
+  if(sous){
+    sous.addEventListener("click", function(e){
+      if(!isPresent()) return;
+      var el = e.target.closest(".pz"); if(!el) return;
+      openDeck(el.getAttribute("data-deck"));
+    });
+  }
+
+  document.addEventListener("keydown", function(e){
+    if(!pwd.hidden){ if(e.key === "Escape") closePwd(); return; }
+    if(deck.hidden) return;
+    if(e.key === "ArrowRight" || e.key === " " || e.key === "PageDown"){ e.preventDefault(); go(1); }
+    else if(e.key === "ArrowLeft" || e.key === "PageUp"){ e.preventDefault(); go(-1); }
+    else if(e.key === "Escape"){ closeDeck(); }
+  });
+
+  apply();
+})();
+</script>
 </body>
 </html>

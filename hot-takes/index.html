@@ -172,6 +172,7 @@
   .prompt{font-family:var(--display);font-weight:700;font-size:clamp(20px,5.6vw,28px);line-height:1.12;
     letter-spacing:-.01em;margin:12px 0 0;text-wrap:balance;max-width:20ch}
   .stage-head{flex:none;margin-bottom:14px}
+  .prompt-sub{font-family:var(--mono);font-weight:600;font-size:13px;letter-spacing:.02em;color:var(--sink);opacity:.6;margin:8px 0 0}
 
   /* ---- SPLIT plein écran (this or that) ---- */
   .split{position:absolute;inset:0;display:flex;z-index:0}
@@ -188,6 +189,12 @@
     top:calc(max(12px,env(safe-area-inset-top)) + 60px);
     background:#fff;border-radius:999px;padding:11px 20px;box-shadow:0 8px 24px rgba(0,0,0,.22);
     font-family:var(--display);font-weight:800;font-size:clamp(19px,5.6vw,26px);letter-spacing:-.01em;white-space:nowrap;text-transform:uppercase}
+  /* sous-titre du format « This or that » — pastille sombre lisible sur les deux moitiés */
+  .split-sub{position:absolute;z-index:2;left:50%;transform:translateX(-50%);
+    top:calc(max(12px,env(safe-area-inset-top)) + 116px);
+    background:rgba(0,0,0,.24);color:#fff;border-radius:999px;padding:6px 15px;
+    font-family:var(--mono);font-weight:600;font-size:12.5px;letter-spacing:.02em;
+    white-space:nowrap;pointer-events:none;text-align:center}
   .split.vert .hlabel{font-size:clamp(30px,8.5vw,46px)}
   .hstack{display:flex;flex-direction:column;align-items:center;text-align:center}
   .wyr-title{position:absolute;z-index:2;left:50%;transform:translateX(-50%);
@@ -394,6 +401,22 @@
   .end-dot{color:var(--ink-dim)}
 
   /* =========================================================================
+     TRANSITION — déplacement entre deux hot takes
+     ========================================================================= */
+  .move{background:var(--fire);color:#fff;gap:20px}
+  .move .eyebrow{color:rgba(255,255,255,.85)}
+  .move-instruction{font-family:var(--display);font-weight:800;letter-spacing:-.02em;line-height:1.05;
+    font-size:clamp(29px,8vw,48px);text-wrap:balance;max-width:15ch;text-shadow:0 4px 18px rgba(120,20,0,.28)}
+  .seatgrid{display:flex;flex-direction:column;gap:8px;margin:4px 0}
+  .seatgrid .seatrow{display:flex;gap:8px;justify-content:center}
+  .seat{width:clamp(34px,10vw,46px);height:clamp(34px,10vw,46px);border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--display);font-weight:800;font-size:clamp(16px,4.6vw,22px);
+    background:rgba(255,255,255,.16);color:#fff;border:1.5px solid rgba(255,255,255,.30)}
+  .seat.hl{background:#fff;color:var(--accent);border-color:#fff;box-shadow:0 6px 16px rgba(120,20,0,.30)}
+  .move-continue{background:#fff;color:var(--accent);width:min(340px,82vw);box-shadow:0 12px 30px rgba(120,20,0,.24)}
+
+  /* =========================================================================
      RÉGLAGES
      ========================================================================= */
   .sheet{position:absolute;inset:0;z-index:20;background:rgba(36,19,9,.4);backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center}
@@ -435,7 +458,7 @@
 
   <!-- ACCUEIL -->
   <section id="home" class="screen home" hidden>
-    <a class="to-menu tl" href="../" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H7"/><path d="M12.5 6.5 7 12l5.5 5.5"/></svg><span>Menu</span></a>
+    <a class="to-menu tl" href="../index.html" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H7"/><path d="M12.5 6.5 7 12l5.5 5.5"/></svg><span>Menu</span></a>
     <div class="home-hero">
       <div class="brand-icons" id="homeIcons" aria-hidden="true"></div>
       <h1 class="wordmark">Hot<br>Takes</h1>
@@ -486,10 +509,18 @@
     <pre class="profile" id="profileBox"></pre>
     <button class="btn fire" id="copyBtn">Copier mon profil</button>
     <div class="end-links">
-      <a class="link" href="../">Menu principal</a>
+      <a class="link" href="../index.html">Menu principal</a>
       <span class="end-dot" aria-hidden="true">·</span>
       <button class="link" id="againBtn">Recommencer</button>
     </div>
+  </section>
+
+  <!-- TRANSITION : on change de place entre deux hot takes (remplace les diapos « Déplacement ») -->
+  <section id="move" class="screen center move" hidden>
+    <p class="eyebrow">On change de place</p>
+    <div class="move-instruction" id="moveText"></div>
+    <div class="seatgrid" id="seatGrid" aria-hidden="true"></div>
+    <button class="btn move-continue" id="moveContinue">Continuer →</button>
   </section>
 
   <!-- RÉGLAGES -->
@@ -549,7 +580,7 @@ const ANNEES = [
 
 /* ---- Tier list : S (top) → F (fond) ---- */
 const TIERS = [
-  { key:"S",color:"#ffd23f" },{ key:"A",color:"#7ee081" },{ key:"B",color:"#5ec6ff" },{ key:"C",color:"#b69bff" },
+  { key:"S",color:"#ffd23f" },{ key:"A",color:"#7ee081" },{ key:"C",color:"#5ec6ff" },{ key:"F",color:"#b69bff" },
 ];
 
 /* ---- Date / Marry / Kill (version PG, mots explicites — pas d'acronyme) ---- */
@@ -564,9 +595,9 @@ const FMK = [
    Chaque format a sa mécanique ET son monde de couleur (cohérent question↔réponse).
    ============================================================================ */
 const QUESTIONS = [
-  // 1 — this or that : archétype absurde, un tap, ça part
+  // 1 — this or that : bouba/kiki (sous-titre = amorce du format)
   {
-    id:"bouba-kiki", format:"this-or-that", variant:"halves", hero:"This or that", plabel:"bouba / kiki", dark:true,
+    id:"bouba-kiki", format:"this-or-that", variant:"halves", hero:"This or that", sub:"Lequel te ressemble le plus?", plabel:"bouba / kiki", dark:true,
     options:[ { key:"bouba", label:"Bouba", color:"#7c3aed", icon:"bouba" }, { key:"kiki", label:"Kiki", color:"#ffb300", icon:"kiki" } ],
   },
   // 2 — texte : ancre humaine, le pourquoi EST la réponse (monde « feu »)
@@ -574,7 +605,32 @@ const QUESTIONS = [
     id:"pourquoi-ici", format:"text", hero:"Pourquoi es-tu ici ce soir?", plabel:"ici ce soir",
     bg:"linear-gradient(155deg,#ff8a1a,#ff2d55 90%)", dark:true, placeholder:"1 à 3 mots…",
   },
-  // 3 — pick : recrutement tôt = plus de monde voit le formulaire
+  // 3 — rate : hype LLM vs le camp « vrai ML »
+  {
+    id:"rate-llm", format:"rate", hero:"Overrated / underrated", thing:"Les LLMs",
+    plabel:"les LLMs", bg:"linear-gradient(180deg,#1b1920,#141219)", dark:true,
+    options:[
+      { key:"over", label:"Overrated",  grad:"linear-gradient(120deg,#ff3b3b,#ff7a1a 50%,#ffd23f)", ink:"#ffffff" },
+      { key:"under",label:"Underrated", grad:"linear-gradient(120deg,#37d67a,#3a8dff 52%,#b06bff)", ink:"#ffffff" },
+    ],
+  },
+  // 4 — spectrum : ton rapport à l'IA (teal ↔ pink, pas de brun)
+  {
+    id:"spectrum-monde", format:"spectrum", hero:"Spectrum", prompt:"Ton rapport à l'IA.",
+    plabel:"mon rapport à l'IA", bg:"#e9ebf1", dark:false,
+    poles:[
+      { label:"Techno-optimiste", short:"techno-optimiste", icon:"spark", color:"#00b3a4" },
+      { label:"Catastrophiste",   short:"catastrophiste",   icon:"skull", color:"#ff2d55" },
+    ],
+    zones:[ "techno-optimiste à fond", "plutôt confiant", "plutôt inquiet", "catastrophiste fini" ],
+  },
+  // 5 — tier list : usages de l'IA
+  {
+    id:"tier-usage", format:"tier", hero:"Tier list", prompt:"Tes usages de l'IA.",
+    plabel:"tier usages", bg:"linear-gradient(180deg,#241a2e,#171019)", dark:true,
+    items:[ { key:"coder",label:"Coder",color:"#3a6ff0" },{ key:"apprendre",label:"Apprendre",color:"#00b3a4" },{ key:"creer",label:"Créer",color:"#ff2d7e" },{ key:"communiquer",label:"Communiquer",color:"#ffb020" },{ key:"organiser",label:"M'organiser",color:"#7c5cff" },{ key:"reflechir",label:"Réfléchir",color:"#ff5a1f" } ],
+  },
+  // 6 — pick : recrutement (le formulaire projet)
   {
     id:"projet-interet", format:"pick", hero:"Pick your fighter", prompt:"Quel projet du CIA t'intéresse le plus?",
     plabel:"projet qui m'intéresse", bg:"var(--paper)", dark:false,
@@ -591,23 +647,41 @@ const QUESTIONS = [
       { key:"synthlab", label:"Synthetic Consumer Lab", color:"#7c5cff", desc:"des agents IA qui simulent de vrais consommateurs" },
     ],
   },
-  // 4 — rate : hype LLM vs le camp « vrai ML »
-  {
-    id:"rate-llm", format:"rate", hero:"Overrated / underrated", thing:"Les LLMs",
-    plabel:"les LLMs", bg:"linear-gradient(180deg,#1b1920,#141219)", dark:true,
-    options:[
-      { key:"over", label:"Overrated",  grad:"linear-gradient(120deg,#ff3b3b,#ff7a1a 50%,#ffd23f)", ink:"#ffffff" },
-      { key:"under",label:"Underrated", grad:"linear-gradient(120deg,#37d67a,#3a8dff 52%,#b06bff)", ink:"#ffffff" },
-    ],
-  },
-  // 5 — smash / pass : vibecoding (faut glisser, pas cliquer)
+  // 7 — smash / pass : vibecoding (faut glisser, pas cliquer)
   {
     id:"vibecoding", format:"swipe", hero:"Smash or pass", plabel:"smash / pass",
     cards:[ { key:"vibecoding", label:"Vibecoding", emoji:"✨" }, { key:"agents", label:"Agents\nIA", emoji:"🐜" }, { key:"prompt", label:"Prompt\nengineering", emoji:"🎯" } ],
     bg:"linear-gradient(180deg,#171a24,#0e0f15)", dark:true,
     options:[ { key:"smash", label:"Smash", color:"#ff2d55" }, { key:"pass", label:"Pass", color:"#2f6bff" } ],
   },
-  // 6 — [MIS DE CÔTÉ] would you rather — retiré du jeu, code du format wyr conservé. Décommenter pour réactiver.
+  // 8 — red / green flag : le débat « juste un outil »
+  {
+    id:"flag-outil", format:"flag", prompt:"« L'IA, c'est juste un outil. »",
+    plabel:"« juste un outil »", bg:"#eceef2", dark:false,
+  },
+  // 9 — date / marry / kill : 4 modèles, couleurs de marque (le placement colore la case)
+  {
+    id:"fmk-chatbots", format:"fmk", hero:"Date · Marry · Kill", prompt:"Laisse-en un de côté.",
+    plabel:"date / marry / kill", bg:"linear-gradient(180deg,#1e1830,#15101c)", dark:true,
+    targets:[ { key:"chatgpt",label:"ChatGPT",color:"#10a37f" },{ key:"claude",label:"Claude",color:"#d97757" },{ key:"grok",label:"Grok",color:"#20232a" },{ key:"deepseek",label:"DeepSeek",color:"#4d6bfe" } ],
+  },
+  // 10 — this or that (cartes) : ta job quand tu gradues
+  {
+    id:"jobs-back-over", format:"this-or-that", variant:"cards", prompt:"Le marché de l'emploi.", sub:"Ça ressemble à quoi dans 5 ans?",
+    plabel:"l'emploi", bg:"#eceef2", dark:false,
+    options:[
+      { key:"back", label:"We're so back", sub:"on est tellement de retour", grad:"var(--gold)", ink:"#3a2600" },
+      { key:"over", label:"It's so over",  sub:"c'est tellement fini",        color:"#0b0b0d", ink:"#f5c542" },
+    ],
+  },
+  // 11 — texte silly : animal spirituel (moitié arrière, monde « violet »)
+  {
+    id:"animal", format:"text", hero:"Ton animal spirituel?", plabel:"animal spirituel",
+    bg:"linear-gradient(155deg,#7c5cff,#e5468a 90%)", dark:true, placeholder:"Ton animal...",
+  },
+
+  /* ===== MIS DE CÔTÉ (code conservé, hors jeu — décommenter pour réactiver) ===== */
+  // would you rather — retiré du jeu, code du format wyr conservé.
   /*
   {
     id:"wyr-passion-utile", format:"wyr", hero:"Would you rather", plabel:"projet",
@@ -617,25 +691,7 @@ const QUESTIONS = [
     ],
   },
   */
-  // 7 — red / green flag : le débat « juste un outil »
-  {
-    id:"flag-outil", format:"flag", prompt:"« L'IA, c'est juste un outil. »",
-    plabel:"« juste un outil »", bg:"#eceef2", dark:false,
-  },
-  // 7 — tier list — FUSION : format tier + contenu « usage de l'IA » (l'ex multi-sélection). Couleurs conservées.
-  // [MIS DE CÔTÉ] ancien contenu « concepts » : AI agents · Prompt engineering · AlphaGo · NVIDIA · Algos génétiques · Yann LeCun
-  {
-    id:"tier-usage", format:"tier", hero:"Tier list", prompt:"Tes usages de l'IA.",
-    plabel:"tier usages", bg:"linear-gradient(180deg,#241a2e,#171019)", dark:true,
-    items:[ { key:"coder",label:"Coder",color:"#3a6ff0" },{ key:"apprendre",label:"Apprendre",color:"#00b3a4" },{ key:"creer",label:"Créer",color:"#ff2d7e" },{ key:"communiquer",label:"Communiquer",color:"#ffb020" },{ key:"organiser",label:"M'organiser",color:"#7c5cff" },{ key:"reflechir",label:"Réfléchir",color:"#ff5a1f" } ],
-  },
-  // 8 — date / marry / kill : 4 modèles, couleurs de marque (le placement colore la case) — GARDÉE telle quelle
-  {
-    id:"fmk-chatbots", format:"fmk", hero:"Date · Marry · Kill", prompt:"Laisse-en un de côté.",
-    plabel:"date / marry / kill", bg:"linear-gradient(180deg,#1e1830,#15101c)", dark:true,
-    targets:[ { key:"chatgpt",label:"ChatGPT",color:"#10a37f" },{ key:"claude",label:"Claude",color:"#d97757" },{ key:"grok",label:"Grok",color:"#20232a" },{ key:"deepseek",label:"DeepSeek",color:"#4d6bfe" } ],
-  },
-  // 9 — [FUSIONNÉ] « Comment tu utilises l'IA? » : son contenu est devenu le tier list ci-dessus. Code multiselect conservé.
+  // « Comment tu utilises l'IA? » multisélection — fusionné dans le tier list. Code conservé.
   /*
   {
     id:"usage-multi", format:"multiselect", hero:"Comment tu utilises l'IA?", prompt:"Coche tout ce qui s'applique.",
@@ -650,36 +706,12 @@ const QUESTIONS = [
     ],
   },
   */
-  // 11 — texte silly : animal spirituel (moitié arrière, monde « violet » ≠ #2)
-  {
-    id:"animal", format:"text", hero:"Ton animal spirituel?", plabel:"animal spirituel",
-    bg:"linear-gradient(155deg,#7c5cff,#e5468a 90%)", dark:true, placeholder:"Ton animal...",
-  },
-  // 12 — spectrum : le monde dans 10 ans (teal ↔ pink, pas de brun)
-  {
-    id:"spectrum-monde", format:"spectrum", hero:"Spectrum", prompt:"Ton rapport à l'IA.",
-    plabel:"mon rapport à l'IA", bg:"#e9ebf1", dark:false,
-    poles:[
-      { label:"Techno-optimiste", short:"techno-optimiste", icon:"spark", color:"#00b3a4" },
-      { label:"Catastrophiste",   short:"catastrophiste",   icon:"skull", color:"#ff2d55" },
-    ],
-    zones:[ "techno-optimiste à fond", "plutôt confiant", "plutôt inquiet", "catastrophiste fini" ],
-  },
-  // 13 — this or that (cartes) : ta job quand tu gradues — clôture perso
-  {
-    id:"jobs-back-over", format:"this-or-that", variant:"cards", prompt:"Le marché de l'emploi.",
-    plabel:"l'emploi", bg:"#eceef2", dark:false,
-    options:[
-      { key:"back", label:"We're so back", sub:"on est tellement de retour", grad:"var(--gold)", ink:"#3a2600" },
-      { key:"over", label:"It's so over",  sub:"c'est tellement fini",        color:"#0b0b0d", ink:"#f5c542" },
-    ],
-  },
 ];
 
 /* ================= ÉTAT ================= */
 const LS_KEY = "cia-hottakes-v4";
-/* ⬇️ À REMPLIR : lien du thread Discord où on colle son profil. Vide = « Copier » copie seulement. */
-const DISCORD_THREAD_URL = "";
+/* Lien du thread Discord où on colle son profil. Copier → copie, puis ouvre le thread. */
+const DISCORD_THREAD_URL = "https://discord.com/channels/1319861600387203173/1544016952731902033";
 let state = { v:4, char:null, answers:{}, pos:0, started:false, screen:"home" };
 let editing = false;
 let specVal = 2;
@@ -708,8 +740,28 @@ function optInk(o){ return o.ink || inkFor(o.color || "#ffffff"); }
 function specPos(i,n){ return n>1 ? (8 + i/(n-1)*84) : 50; }
 
 /* ================= NAVIGATION ================= */
-const screens = ["home","create","play","end"];
+const screens = ["home","create","play","end","move"];
 function show(id){ screens.forEach(s => { document.getElementById(s).hidden = (s !== id); }); state.screen = id; save(); const el=document.getElementById(id); if(el) el.scrollTop=0; }
+
+/* ---------- TRANSITIONS : déplacement entre deux questions (remplace les diapos « Déplacement ») ---------- */
+const MOVES = [
+  { text:"tous les AB se déplacent de 2 vers la droite",         hl:["A","B"] },
+  { text:"tous les BD se déplacent d'une table vers la fenêtre", hl:["B","D"] },
+];
+const SEAT_ROWS = [["A","B","A","B","A","B"],["C","D","C","D","C","D"]];
+function renderSeatGrid(hl){
+  const g=document.getElementById("seatGrid"); g.innerHTML="";
+  SEAT_ROWS.forEach(row=>{ const r=document.createElement("div"); r.className="seatrow";
+    row.forEach(l=>{ const s=document.createElement("div"); s.className="seat"+(hl.indexOf(l)>=0?" hl":""); s.textContent=l; r.appendChild(s); });
+    g.appendChild(r); });
+}
+function showTransition(gapIndex){
+  const m=MOVES[gapIndex % MOVES.length];
+  document.getElementById("moveText").textContent=m.text;
+  renderSeatGrid(m.hl);
+  show("move");
+}
+document.getElementById("moveContinue").onclick=()=>{ state.pos++; editing=false; renderPlay(); show("play"); };
 
 /* ================= CRÉATION ================= */
 function renderCreate(){
@@ -766,7 +818,7 @@ function renderPlay(){
   } else {
     const last = (state.pos === QUESTIONS.length-1);
     nextBtn.hidden = false; nextBtn.textContent = last ? "Mon profil →" : "Suivant →";
-    nextBtn.onclick = last ? (()=>{ renderEnd(); show("end"); }) : (()=>{ state.pos++; editing=false; renderPlay(); });
+    nextBtn.onclick = last ? (()=>{ renderEnd(); show("end"); }) : (()=>{ showTransition(state.pos); });
     editBtn.hidden = false; editBtn.onclick = () => { editing = true; renderPlay(); };
     renderAnswer(q, ans);
     if(q.cta){ const ansEl=stage.querySelector(".ans"); if(ansEl) ansEl.insertAdjacentHTML("beforeend", `<a class="cta-form" href="${q.cta.url}" target="_blank" rel="noopener">${esc(q.cta.label)}</a>`); }
@@ -781,13 +833,14 @@ function askHTML(q){
   switch(q.format){
     case "this-or-that": {
       if(q.variant==="cards"){
-        return `<div class="stage-head"><p class="prompt" style="margin-top:0">${esc(q.prompt)}</p></div><div class="stack">` + q.options.map(o =>
+        return `<div class="stage-head"><p class="prompt" style="margin-top:0">${esc(q.prompt)}</p>${q.sub?`<p class="prompt-sub">${esc(q.sub)}</p>`:""}</div><div class="stack">` + q.options.map(o =>
           `<button class="bigopt" data-key="${o.key}" style="background:${optBg(o)};color:${optInk(o)}"><span class="bo-label">${esc(o.label)}</span><span class="bo-sub">${esc(o.sub||"")}</span></button>`).join("") + `</div>`;
       }
       const [a,b]=q.options;
       const half=o=>`<button class="half" data-key="${o.key}" style="background:${o.color};color:${inkFor(o.color)}"><span class="hstack">${o.icon?`<span class="hshape">${icon(o.icon)}</span>`:""}<span class="hlabel">${esc(o.label)}</span></span></button>`;
       return `<div class="split">${half(a)}${half(b)}</div>
-        <div class="split-badge"><span style="color:${a.color}">This</span> <span style="color:#241309">or</span> <span style="color:${b.color}">that</span></div>`;
+        <div class="split-badge"><span style="color:${a.color}">This</span> <span style="color:#241309">or</span> <span style="color:${b.color}">that</span></div>`
+        + (q.sub?`<div class="split-sub">${esc(q.sub)}</div>`:"");
     }
     case "text":
       return headHTML(q) + `<div class="text-stage">

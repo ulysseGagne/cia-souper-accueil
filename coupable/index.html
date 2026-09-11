@@ -30,7 +30,12 @@
   img{max-width:100%}
   [hidden]{display:none!important}
 
-  .app{height:100dvh;position:relative}
+  .app{height:100dvh;position:relative;display:flex;flex-direction:column}
+  /* barre du haut de l'écran des suspects : MENU blanc + titre du jeu, AU-DESSUS des cartes */
+  .app-head{flex:0 0 auto;display:flex;align-items:center;gap:14px;
+    padding:max(13px,env(safe-area-inset-top)) clamp(12px,4vw,20px) 6px}
+  .app-title{font-family:var(--display);font-weight:800;font-size:clamp(18px,5.6vw,26px);
+    letter-spacing:-.02em;line-height:1;color:#fff}
 
   /* ---------- ACCUEIL : la ligne (100% statique, zero animation) ---------- */
   .home{
@@ -82,25 +87,23 @@
   .back:active{transform:scale(.93)}
   .back:focus-visible{outline:3px solid #fff;outline-offset:2px}
   .back svg{width:21px;height:21px;display:block}
-  /* --- Retour au menu maître (app Trois jeux) --- */
-  /* Accueil : pastille « ← Menu » — lisible, un vrai corps de flèche, PAS un cercle noir */
-  .to-menu{position:fixed;z-index:60;top:max(13px,env(safe-area-inset-top));
+  /* --- Retour au menu maître (app Trois jeux) — pastille BLANCHE --- */
+  .to-menu{
     display:inline-flex;align-items:center;gap:6px;padding:8px 14px 8px 10px;
     border:none;border-radius:999px;text-decoration:none;cursor:pointer;
-    font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
-    color:#fff;background:rgba(255,255,255,.14);
-    -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
-    box-shadow:0 3px 16px rgba(0,0,0,.4);
-    transition:transform .09s ease, background .15s ease}
-  .to-menu.tl{left:max(12px,env(safe-area-inset-left))}
-  .to-menu:hover{background:rgba(255,255,255,.24)}
+    font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:#0c0e13;background:#fff;
+    box-shadow:0 4px 16px rgba(0,0,0,.28);
+    transition:transform .09s ease, filter .15s ease}
+  .to-menu.tl{position:fixed;z-index:60;top:max(13px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left))}
+  .to-menu:hover{filter:brightness(.96)}
   .to-menu:active{transform:scale(.93)}
   .to-menu:focus-visible{outline:3px solid #fff;outline-offset:2px}
   .to-menu svg{width:21px;height:21px;display:block;flex:none}
 
   /* ---------- PICKER ---------- */
   .grid{
-    height:100%;
+    flex:1;min-height:0;
     display:grid;grid-template-columns:repeat(2,1fr);grid-auto-rows:1fr;
     gap:8px;padding:8px;
   }
@@ -139,13 +142,52 @@
     font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;opacity:.6;
   }
   @media (prefers-reduced-motion:reduce){.flood{animation:none}.tile{transition:none}}
+
+  /* ================= MODE PRÉSENTATION (projecteur) ================= */
+  .present{position:fixed;inset:0;z-index:40;color:var(--ink);overflow:hidden;
+    background:radial-gradient(82% 62% at 50% 1%, rgba(255,255,255,.135), transparent 74%), #07080c}
+  .pstage{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;gap:clamp(16px,3vh,28px);
+    padding:clamp(74px,11vh,116px) clamp(28px,7vw,90px) clamp(58px,9vh,88px);
+    transition:background .28s ease,color .28s ease}
+  .p-eyebrow{margin:0;font-family:var(--mono);font-weight:600;font-size:clamp(12px,2.4vw,15px);
+    letter-spacing:.24em;text-transform:uppercase;opacity:.72}
+  .p-title{margin:0;font-family:var(--display);font-weight:800;letter-spacing:-.03em;line-height:.9;
+    font-size:clamp(42px,9vw,96px);text-wrap:balance;max-width:15ch}
+  .p-title .bang{color:var(--alarm)}
+  .p-sub{margin:0;font-family:var(--display);font-weight:600;letter-spacing:-.01em;
+    font-size:clamp(19px,3.8vw,30px);line-height:1.32;max-width:26ch;opacity:.9}
+  .p-fact{margin:0;font-family:var(--display);font-weight:800;letter-spacing:-.02em;line-height:1.14;
+    font-size:clamp(25px,5vw,50px);text-wrap:balance;max-width:20ch}
+  .plineup{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(8px,1.4vw,14px);max-width:1040px}
+  .pcard{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;
+    min-width:clamp(94px,15vw,152px);min-height:clamp(56px,9vh,84px);padding:10px 14px;gap:1px;border-radius:14px;
+    box-shadow:0 8px 22px rgba(0,0,0,.3)}
+  .pcard .pn{font-family:var(--display);font-weight:800;font-size:clamp(16px,2.6vw,24px);letter-spacing:-.02em;line-height:1;white-space:nowrap}
+  .pcard .pr{font-family:var(--mono);font-weight:500;font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.78}
+  .pstage.flood{animation:pop .2s cubic-bezier(.2,.9,.3,1)}
+  .pflood-name{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(58px,17vw,150px);line-height:.9;letter-spacing:-.03em;white-space:nowrap}
+  .pflood-role{margin:0;font-family:var(--mono);font-weight:500;font-size:clamp(12px,2.4vw,15px);letter-spacing:.2em;text-transform:uppercase;opacity:.82}
+  .pnav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;
+    width:clamp(44px,7vw,60px);height:clamp(44px,7vw,60px);border-radius:50%;
+    border:1.6px solid rgba(128,128,128,.55);background:rgba(128,128,128,.18);color:currentColor;cursor:pointer;
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    font-size:clamp(24px,4vw,32px);line-height:1;display:flex;align-items:center;justify-content:center;
+    transition:transform .09s ease,background .15s ease}
+  .pnav:hover{background:rgba(128,128,128,.3)}
+  .pnav:active{transform:translateY(-50%) scale(.92)}
+  .pnav[disabled]{opacity:0;pointer-events:none}
+  .pnav.prev{left:max(12px,env(safe-area-inset-left))}
+  .pnav.next{right:max(12px,env(safe-area-inset-right))}
+  .pbar{position:absolute;left:0;bottom:0;height:4px;width:0;background:currentColor;opacity:.85;z-index:3;transition:width .28s ease}
+  @media (prefers-reduced-motion:reduce){.pstage.flood{animation:none}.pstage,.pbar{transition:none}}
 </style>
 </head>
 <body>
 
 <!-- ACCUEIL — la ligne -->
 <section class="home" id="home">
-    <a class="to-menu tl" href="../" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H7"/><path d="M12.5 6.5 7 12l5.5 5.5"/></svg><span>Menu</span></a>
+    <a class="to-menu tl" href="../index.html" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H7"/><path d="M12.5 6.5 7 12l5.5 5.5"/></svg><span>Menu</span></a>
   <div class="scene">
     <svg viewBox="0 0 248 230" aria-hidden="true" focusable="false">
       <defs>
@@ -213,7 +255,10 @@
 </section>
 
 <div class="app" id="app" hidden>
-  <a class="to-menu tl" href="../" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H7"/><path d="M12.5 6.5 7 12l5.5 5.5"/></svg><span>Menu</span></a>
+  <div class="app-head">
+    <a class="to-menu" href="../index.html" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H7"/><path d="M12.5 6.5 7 12l5.5 5.5"/></svg><span>Menu</span></a>
+    <span class="app-title">À qui le fun fact?</span>
+  </div>
   <div class="grid" id="grid"></div>
 </div>
 
@@ -222,6 +267,15 @@
   <div class="frole" id="frole"></div>
   <div class="change">Toucher pour changer</div>
 </div>
+
+<!-- MODE PRÉSENTATION (projecteur) — série de diapos -->
+<section class="present" id="present" hidden>
+  <a class="to-menu tl" href="../index.html" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H7"/><path d="M12.5 6.5 7 12l5.5 5.5"/></svg><span>Menu</span></a>
+  <div class="pstage" id="pstage"></div>
+  <button class="pnav prev" id="pPrev" aria-label="Diapositive précédente">‹</button>
+  <button class="pnav next" id="pNext" aria-label="Diapositive suivante">›</button>
+  <div class="pbar" id="pbar"></div>
+</section>
 
 <script>
   /* ---- MODIFIER ICI : prénoms, rôles, couleurs ---- */
@@ -235,6 +289,22 @@
     { name:"Yves",        role:"Marketing",  color:"#8250c4" }, // mauve
     { name:"Zachary",     role:"Projets",    color:"#f2c018" }, // jaune
   ];
+
+  /* ---- MODE PRÉSENTATION : ordre des fun facts = clé de l'animateur ----
+     Affiché UNIQUEMENT en mode présentation (projecteur, protégé par mot de passe).
+     Verbatim (ponctuation incluse); fautes de grammaire corrigées. */
+  const PRESENT_ORDER = [
+    { name:"Zachary",     fact:"Depuis que j'ai commencé l'électronique, j'ai réussi à faire exploser pas moins de 37 composants électroniques et à récolter au passage 5 brûlures sur les mains." },
+    { name:"Cyrille",     fact:"J'ai un compte Instagram pour mon toutou, qui est un poussin dominateur. Son nom est \"letyranjaune\"." },
+    { name:"Nezar",       fact:"Mon « initiation » à l'IA était de faire comme projet de Cégep une trieuse de résistances through hole." },
+    { name:"Rana",        fact:"J'ai passé 7 examens pour enfin avoir mon permis de conduire (don't judge me je conduis pas si pire)." },
+    { name:"Nathaniel",   fact:"Mon garde-robe est le spectre des couleurs visibles. En effet, mon garde-robe est organisé dans un dégradé de couleurs similaires. On passe du rouge à l'orange, de l'orange au jaune... Fun fact bonus : chaque cintre est de la même couleur que son chandail. On voit encore mieux le spectre grâce à eux." },
+    { name:"Yves",        fact:"J'ai participé à deux hackathons dans ma vie. J'étais parmi les derniers dans l'un et j'ai eu la première place dans l'autre." },
+    { name:"Ulysse",      fact:"J'ai un projet GitHub qui génère un trajet pour courir toutes les rues d'un quartier sans jamais revenir sur mes pas." },
+    { name:"Alexandrine", fact:"J'ai déjà attrapé 5 chevaux sur une route secondaire (90 km/h) avec mon manteau d'hiver, une auto et un biscuit." },
+  ];
+  function isPresent(){ try{ return localStorage.getItem("cia-present")==="1"; }catch(e){ return false; } }
+  function leaderByName(n){ return LEADERS.find(L=>L.name===n); }
 
   // noir ou blanc selon la luminosité de la couleur
   function inkFor(hex){
@@ -282,7 +352,7 @@
   });
 
   function start(){ home.hidden=true; app.hidden=false; fitAll(); }
-  document.getElementById("startBtn").addEventListener("click",start);
+  document.getElementById("startBtn").addEventListener("click",()=>{ if(isPresent()) startPresent(); else start(); });
 
   function showFlood(L,ink){
     flood.style.background=L.color;
@@ -300,6 +370,62 @@
     if(e.key!=="Escape") return;
     if(!flood.hidden) toPicker();
     else if(!app.hidden) toHome();
+  });
+
+  /* ================= MODE PRÉSENTATION ================= */
+  const present=document.getElementById("present");
+  const pstage=document.getElementById("pstage");
+  const pbar=document.getElementById("pbar");
+  const pPrev=document.getElementById("pPrev"), pNext=document.getElementById("pNext");
+  let pslides=[], pidx=0;
+  function esc(s){ return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+
+  function buildPresentSlides(){
+    const s=[{type:"intro"}];
+    PRESENT_ORDER.forEach((_,i)=>{ s.push({type:"cards",i}); s.push({type:"answer",i}); });
+    return s;
+  }
+  function renderPresent(){
+    const sl=pslides[pidx];
+    pstage.classList.remove("flood");
+    pstage.style.background=""; present.style.color="";
+    if(sl.type==="intro"){
+      pstage.innerHTML=
+        `<p class="p-eyebrow">Coupable!</p>`+
+        `<h2 class="p-title">À qui le fun fact<span class="bang">?</span></h2>`+
+        `<p class="p-sub">À chaque tour, votez pour un leader. Mauvaise réponse? Vous êtes éliminés.</p>`;
+    } else if(sl.type==="cards"){
+      const cards=PRESENT_ORDER.slice(sl.i).map(f=>{
+        const L=leaderByName(f.name), ink=inkFor(L.color);
+        return `<div class="pcard" style="background:${L.color};color:${ink}"><span class="pn">${L.name}</span><span class="pr">${L.role}</span></div>`;
+      }).join("");
+      pstage.innerHTML=
+        `<p class="p-eyebrow">Fun fact nº${sl.i+1} · ${PRESENT_ORDER.length-sl.i} en jeu</p>`+
+        `<p class="p-fact">${esc(PRESENT_ORDER[sl.i].fact)}</p>`+
+        `<div class="plineup">${cards}</div>`;
+    } else { // answer — la couleur du bon suspect remplit l'écran
+      const L=leaderByName(PRESENT_ORDER[sl.i].name), ink=inkFor(L.color);
+      pstage.style.background=L.color; present.style.color=ink;
+      pstage.classList.add("flood");
+      pstage.style.animation="none"; void pstage.offsetWidth; pstage.style.animation="";
+      pstage.innerHTML=
+        `<p class="p-eyebrow">Fun fact nº${sl.i+1}</p>`+
+        `<p class="pflood-name">${L.name}</p>`+
+        `<p class="pflood-role">${L.role}</p>`;
+    }
+    pPrev.disabled=(pidx===0); pNext.disabled=(pidx===pslides.length-1);
+    pbar.style.width=((pidx+1)/pslides.length*100)+"%";
+  }
+  function pgo(d){ pidx=Math.max(0,Math.min(pidx+d,pslides.length-1)); renderPresent(); }
+  function startPresent(){ pslides=buildPresentSlides(); pidx=0; home.hidden=true; app.hidden=true; flood.hidden=true; present.hidden=false; renderPresent(); }
+  pPrev.addEventListener("click",()=>pgo(-1));
+  pNext.addEventListener("click",()=>pgo(1));
+  pstage.addEventListener("click",()=>pgo(1));
+  document.addEventListener("keydown",e=>{
+    if(present.hidden) return;
+    if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){ e.preventDefault(); pgo(1); }
+    else if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); pgo(-1); }
+    else if(e.key==="Escape"){ present.hidden=true; home.hidden=false; }
   });
 
   if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ fitAll(); if(!flood.hidden) fitFlood(); });

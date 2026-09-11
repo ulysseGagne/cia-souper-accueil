@@ -195,6 +195,16 @@
     position:relative;z-index:1;background:var(--accent);color:var(--accent-ink);
     width:100%;max-width:440px;margin-top:4px;
   }
+  .btn.spent{opacity:.42;pointer-events:none}
+
+  /* ---------- RÈGLES (rappel — divulgation progressive) ---------- */
+  .rules-body{
+    white-space:pre-wrap;font-family:var(--mono);font-size:14px;line-height:1.72;
+    text-align:left;color:var(--ink);width:100%;max-width:440px;
+    background:var(--ground-2);border:1px solid var(--line);border-radius:16px;
+    padding:18px;max-height:52dvh;overflow-y:auto;
+  }
+  .rules-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;max-width:440px;margin-top:2px}
 
   /* ---------- RÔLE — option plein écran couleur ---------- */
   .role-screen.flood{color:#fff;background:var(--rc);animation:pop .2s cubic-bezier(.2,.9,.3,1);overflow:hidden}
@@ -290,6 +300,26 @@
     .role-screen.flood,.sheet-card{animation:none}
     .btn:active,.chip:active,.mini:active,.step-btn:active,.gear:active{transform:none}
   }
+
+  /* ---------- EXEMPLE §4 (mode présentation, verbatim) ---------- */
+  .ex-h{font-family:var(--display);font-weight:800;font-size:clamp(22px,6vw,34px);line-height:1.05;
+    letter-spacing:-.02em;margin:0;text-wrap:balance;max-width:18ch}
+  .ex-answers{display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px}
+  .ex-answer{display:flex;align-items:center;gap:12px;text-align:left;
+    background:var(--ground-2);border:1.5px solid var(--line);border-radius:14px;padding:13px 15px;
+    transition:opacity .2s ease,border-color .2s ease}
+  .ex-answer .ex-txt{font-family:var(--display);font-weight:800;font-size:clamp(15px,4.2vw,19px);line-height:1.14;flex:1;color:var(--ink)}
+  .ex-answer .ex-tag{font-family:var(--mono);font-weight:600;font-size:11px;letter-spacing:.04em;text-align:right;
+    white-space:nowrap;display:flex;flex-direction:column;gap:2px}
+  .ex-answer .ex-verdict{opacity:.72}
+  /* révélé : la bonne réponse (HONNÊTE) = BLANC · les fausses (MENTEUR) = NOIR */
+  .ex-answer.honnete{background:#fff;border-color:#fff}
+  .ex-answer.honnete .ex-txt,.ex-answer.honnete .ex-tag{color:#111318}
+  .ex-answer.menteur{background:#0c0e13;border-color:#0c0e13}
+  .ex-answer.menteur .ex-txt,.ex-answer.menteur .ex-tag{color:#ffffff}
+  .ex-answer.elim .ex-txt{text-decoration:line-through;text-decoration-thickness:2px}
+  .ex-outcome{font-family:var(--mono);font-size:13.5px;line-height:1.55;color:var(--ink);margin:0;width:100%;max-width:440px;
+    background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-align:left}
 </style>
 </head>
 <body>
@@ -298,7 +328,7 @@
 
   <!-- ACCUEIL -->
   <section id="home" class="screen center">
-    <a class="to-menu tl" href="../" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H7"/><path d="M12.5 6.5 7 12l5.5 5.5"/></svg><span>Menu</span></a>
+    <a class="to-menu tl" href="../index.html" aria-label="Retour au menu"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H7"/><path d="M12.5 6.5 7 12l5.5 5.5"/></svg><span>Menu</span></a>
     <div class="home-roles" aria-hidden="true"><span class="top">🥸</span><span>🧐</span><span>🤓</span></div>
     <h1 class="wordmark stack">
       <span class="lede">The</span>
@@ -306,7 +336,18 @@
       <span class="big">Game.</span>
     </h1>
     <p class="tagline">Démasque les menteurs.</p>
-    <button class="btn primary home-cta" data-go="setupN">Démasquer</button>
+    <button class="btn primary home-cta" id="toRules">Démasquer</button>
+  </section>
+
+  <!-- RÈGLES (rappel) -->
+  <section id="rules" class="screen center" hidden>
+    <p class="eyebrow" id="rulesStep">Règles</p>
+    <h2 class="q" id="rulesTitle">Les rôles</h2>
+    <div class="rules-body" id="rulesBody"></div>
+    <div class="rules-nav">
+      <button class="link" id="rulesSkip">Passer</button>
+      <button class="btn primary" id="rulesNext">Suivant →</button>
+    </div>
   </section>
 
   <!-- NB JOUEURS -->
@@ -372,7 +413,23 @@
       <button class="link" id="resetBtn">Recommencer</button>
     </div>
     <a class="btn primary cta-form" id="projectCta" href="https://forms.cloud.microsoft/r/np4xP3HYBf" target="_blank" rel="noopener" hidden>Embarque dans un projet →</a>
-    <a class="menu-cta" id="toMenuScore" hidden href="../" aria-label="Retour au menu"><span>Au menu</span><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h13"/><path d="M11.5 6.5 17 12l-5.5 5.5"/></svg></a>
+    <a class="menu-cta" id="toMenuScore" hidden href="../index.html" aria-label="Retour au menu"><span>Au menu</span><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h13"/><path d="M11.5 6.5 17 12l-5.5 5.5"/></svg></a>
+  </section>
+
+  <!-- EXEMPLE §4 (mode présentation) -->
+  <section id="example" class="screen center" hidden>
+    <p class="eyebrow" id="exEyebrow">Exemple · Tour 1</p>
+    <h2 class="ex-h" id="exTitle">L'honnête survit</h2>
+    <div class="card">
+      <p class="card-label">🧐 L'ignorant lit la question</p>
+      <p class="card-q" id="exQ"></p>
+    </div>
+    <div class="ex-answers" id="exAnswers"></div>
+    <p class="ex-outcome" id="exOutcome" hidden></p>
+    <div class="rules-nav">
+      <button class="link" id="exSkip">Passer</button>
+      <button class="btn primary" id="exNext">Suivant →</button>
+    </div>
   </section>
 
   <!-- RÉGLAGES -->
@@ -456,6 +513,62 @@ const ROLES = {
   MENTEUR:  { key:"MENTEUR",  emoji:"🥸", name:"Menteur",  css:"menteur"  },
 };
 
+/* Règles-rappel — texte verbatim de bluff-regles.txt (§1-2-3-5), divulgation progressive.
+   On explique en personne; ces cartes ne sont qu'un rappel. */
+const RULES = [
+  { title:"Les rôles", body:
+`Le joueur IGNORANT 🧐 — ne connaît pas la réponse.
+Le joueur HONNÊTE 🤓 — connaît la vraie réponse.
+Le joueur MENTEUR 🥸 — invente une fausse réponse. (il y en a plusieurs)` },
+  { title:"Le but", body:
+`Le joueur IGNORANT doit identifier les MENTEURS.` },
+  { title:"Le tour de jeu", body:
+`Les rôles sont assignés aléatoirement.
+Le joueur IGNORANT 🧐 lit la question.
+
+Tous les autres joueurs donnent une réponse :
+→ Le joueur HONNÊTE 🤓 lit la réponse.
+→ Les joueurs MENTEURS 🥸🥸 inventent une réponse.
+
+Le joueur IGNORANT 🧐 élimine les joueurs, un à la fois :
+→ S'il élimine tous les MENTEURS 🥸🥸, il gagne 1 point.
+→ S'il élimine le joueur HONNÊTE 🤓, tous les MENTEURS 🥸🥸 encore en jeu gagnent 1 point.
+
+On passe au tour suivant. Les rôles sont réassignés à chaque tour.` },
+  { title:"Fin de partie", body:
+`Le plus de points l'emporte.` },
+];
+
+/* Présentation (projecteur) — drapeau local à l'appareil, partagé par toute l'app. */
+function isPresent(){ try{ return localStorage.getItem("cia-present")==="1"; }catch(e){ return false; } }
+
+/* Exemple §4 (bluff-regles.txt) — verbatim, joué dans l'UI du jeu, divulgation progressive.
+   role : rôle réel de la réponse. steps : ordre d'élimination de l'IGNORANT + verdict. */
+const EXAMPLE = [
+  {
+    title:"L'honnête survit",
+    q:"Quel est le slogan du Club?",
+    answers:[
+      { text:"Faut que t'ailles du fun!", role:"HONNETE" },
+      { text:"En route vers demain!",     role:"MENTEUR" },
+      { text:"L'IA à ta portée!",         role:"MENTEUR" },
+    ],
+    steps:[ { elim:1, verdict:"Bien vu." }, { elim:2, verdict:"Bien vu." } ],
+    outcome:"Il a éliminé tous les MENTEURS 🥸🥸 : l'IGNORANT gagne 1 point.",
+  },
+  {
+    title:"L'honnête tombe à mi-chemin",
+    q:"Combien de cours d'IA faut-il pour rejoindre un projet?",
+    answers:[
+      { text:"Au moins un cours d'intro.",   role:"MENTEUR" },
+      { text:"Aucun.",                        role:"HONNETE" },
+      { text:"Les deux cours obligatoires.",  role:"MENTEUR" },
+    ],
+    steps:[ { elim:2, verdict:"Bien vu." }, { elim:1, verdict:"Raté!" } ],
+    outcome:"Le MENTEUR 🥸 encore en jeu gagne 1 point.",
+  },
+];
+
 /* ================= ÉTAT ================= */
 const LS_KEY = "cia-fishy-v1";
 let state = { N:null, num:null, round:1, score:0, flood:false };
@@ -493,7 +606,7 @@ function projectOf(round){ return PROJECTS[(round - 1) % PROJECTS.length]; }
 function questionOf(round){ return "Qu'est-ce que le projet " + projectOf(round).name + "?"; }
 
 /* ================= NAVIGATION ================= */
-const screens = ["home","setupN","setupNum","role","scored","score"];
+const screens = ["home","rules","setupN","setupNum","role","scored","score","example"];
 function show(id){
   screens.forEach(s => { document.getElementById(s).hidden = (s !== id); });
   const sc = document.getElementById(id);
@@ -526,12 +639,17 @@ function renderRole(){
        <p class="card-hint">C'est toi qui mènes ce tour-ci. Écoute les réponses, puis élimine les MENTEURS un par un.</p>`;
   } else if(rk === "HONNETE"){
     card.innerHTML =
-      `<p class="card-label">Reformule dans tes mots</p>
-       <p class="card-body">${proj.answer}</p>
-       <p class="card-hint">Tu dois répondre sans regarder ton écran.</p>`;
+      `<p class="card-label">La vraie réponse</p>
+       <p class="card-body peek-content" id="peekContent" hidden>${proj.answer}</p>
+       <button class="btn onflood peek-btn" id="peekBtn" type="button" data-done="Réponse déjà affichée">Afficher la réponse pendant 5 secondes</button>`;
+    wirePeek();
   } else {
     card.innerHTML =
-      `<p class="card-body">Invente une réponse crédible. Ne te fais pas démasquer.</p>`;
+      `<p class="card-body">Invente une réponse crédible. Ne te fais pas démasquer.</p>
+       <p class="card-label" style="margin-top:8px">La question</p>
+       <p class="card-q peek-content" id="peekContent" hidden>« ${q} »</p>
+       <button class="btn onflood peek-btn" id="peekBtn" type="button" data-done="Question déjà affichée">Afficher la question pendant 5 secondes</button>`;
+    wirePeek();
   }
   save();
 }
@@ -617,6 +735,104 @@ function buildNumGrid(){
 document.querySelectorAll("[data-go]").forEach(el=>{
   el.addEventListener("click", ()=> show(el.getAttribute("data-go")) );
 });
+
+/* ---------- RÈGLES (rappel, divulgation progressive) ---------- */
+let rulesIdx = 0;
+function renderRules(i){
+  rulesIdx = i;
+  const r = RULES[i];
+  document.getElementById("rulesStep").textContent = "Règles · " + (i+1) + " / " + RULES.length;
+  document.getElementById("rulesTitle").textContent = r.title;
+  document.getElementById("rulesBody").textContent = r.body;
+  document.getElementById("rulesNext").textContent = (i >= RULES.length-1) ? "Compris, jouer →" : "Suivant →";
+}
+document.getElementById("toRules").addEventListener("click", ()=>{ renderRules(0); show("rules"); });
+document.getElementById("rulesNext").addEventListener("click", ()=>{
+  if(isPresent() && rulesIdx === 2){ startExample(); return; }   // §4 entre « Le tour de jeu » et « Fin de partie »
+  if(rulesIdx >= RULES.length-1) show("setupN");
+  else renderRules(rulesIdx+1);
+});
+document.getElementById("rulesSkip").addEventListener("click", ()=> show("setupN"));
+
+/* ---------- EXEMPLE §4 (staged, verbatim) — présentation seulement ---------- */
+let exTour = 0, exStep = 0;   // exStep : 0 = mise en place, 1..n = éliminations, n+1 = issue
+function startExample(){ exTour = 0; exStep = 0; renderExample(); show("example"); }
+function renderExample(){
+  const T = EXAMPLE[exTour];
+  const done = T.steps.slice(0, Math.min(exStep, T.steps.length));   // éliminations déjà faites
+  const elimIdx = done.map(s => s.elim);
+  const showOutcome = exStep > T.steps.length;
+
+  document.getElementById("exEyebrow").textContent = "Exemple · " + (exTour === 0 ? "Tour 1" : "Tour 2");
+  document.getElementById("exTitle").textContent = T.title;
+  document.getElementById("exQ").textContent = "« " + T.q + " »";
+
+  const box = document.getElementById("exAnswers");
+  box.innerHTML = "";
+  T.answers.forEach((a, i) => {
+    const el = document.createElement("div");
+    el.className = "ex-answer";
+    let tag = "";
+    if(elimIdx.includes(i)){
+      const role = ROLES[a.role], step = T.steps.find(s => s.elim === i);
+      el.classList.add("elim", a.role.toLowerCase());
+      tag = `<span class="ex-tag"><span>${role.emoji} ${role.name.toUpperCase()}</span><span class="ex-verdict">${step.verdict}</span></span>`;
+    } else if(showOutcome){
+      const role = ROLES[a.role];
+      el.classList.add(a.role.toLowerCase());
+      tag = `<span class="ex-tag"><span>${role.emoji} ${role.name.toUpperCase()}</span></span>`;
+    }
+    el.innerHTML = `<span class="ex-txt">« ${a.text} »</span>` + tag;
+    box.appendChild(el);
+  });
+
+  const out = document.getElementById("exOutcome");
+  out.hidden = !showOutcome;
+  if(showOutcome) out.textContent = T.outcome;
+
+  const last = T.steps.length + 1;
+  const nextBtn = document.getElementById("exNext");
+  nextBtn.textContent = (exStep >= last && exTour < EXAMPLE.length - 1) ? "Tour suivant →" : "Suivant →";
+
+  document.getElementById("example").scrollTop = 0;
+}
+function exAdvance(){
+  const T = EXAMPLE[exTour], last = T.steps.length + 1;
+  if(exStep < last){ exStep++; renderExample(); return; }
+  if(exTour < EXAMPLE.length - 1){ exTour++; exStep = 0; renderExample(); }
+  else { renderRules(RULES.length - 1); show("rules"); }   // → « Fin de partie »
+}
+function exBack(){
+  if(exStep > 0){ exStep--; renderExample(); return; }
+  if(exTour > 0){ exTour--; exStep = EXAMPLE[exTour].steps.length + 1; renderExample(); return; }
+  renderRules(2); show("rules");   // ← « Le tour de jeu »
+}
+document.getElementById("exNext").addEventListener("click", exAdvance);
+document.getElementById("exSkip").addEventListener("click", ()=> show("setupN"));
+document.addEventListener("keydown", e=>{
+  if(document.getElementById("example").hidden) return;
+  if(e.key === "ArrowRight" || e.key === " " || e.key === "PageDown"){ e.preventDefault(); exAdvance(); }
+  else if(e.key === "ArrowLeft" || e.key === "PageUp"){ e.preventDefault(); exBack(); }
+});
+
+/* ---------- PEEK : flash 5 s de la réponse (honnête) / question (menteur), puis grise ---------- */
+function wirePeek(){
+  const btn = document.getElementById("peekBtn");
+  const content = document.getElementById("peekContent");
+  if(!btn || !content) return;
+  const done = btn.getAttribute("data-done") || "Déjà affiché";
+  btn.onclick = ()=>{
+    if(btn.classList.contains("spent")) return;
+    btn.classList.add("spent");
+    content.hidden = false;
+    let t = 5; btn.textContent = "Visible · " + t + " s";
+    const iv = setInterval(()=>{
+      t--;
+      if(t <= 0){ clearInterval(iv); content.hidden = true; btn.textContent = done; }
+      else btn.textContent = "Visible · " + t + " s";
+    }, 1000);
+  };
+}
 
 document.getElementById("nChoices").addEventListener("click", e=>{
   const b = e.target.closest("[data-n]"); if(!b) return;
